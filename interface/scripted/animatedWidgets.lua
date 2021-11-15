@@ -46,13 +46,37 @@ end
 ProcessPromise = RPCPromise:new()
 
 function ProcessPromise:finished()
-
   self.processingTime = self.processingTime + script.updateDt()
   local t = (self.duration - self.processingTime) / self.duration
 
   widget.setProgress(self.name, util.lerp(t, self.endValue, self.startValue))
   if t <= 0 then self.hasSucceeded = true return true end
 end
+
+-- Rotate the promise widget
+RotateImagePromise = RPCPromise:new()
+
+function RotateImagePromise:finished()
+  self.processingTime = self.processingTime + script.updateDt()
+  local t = (self.duration - self.processingTime) / self.duration
+
+  widget.setImageRotation(self.name, util.lerp(t, self.endValue, self.startValue))
+  if t <= 0 then self.hasSucceeded = true return true end
+end
+
+-- Scale the promise widget
+ScaleImagePromise = RPCPromise:new()
+
+function ScaleImagePromise:finished()
+  self.processingTime = self.processingTime + script.updateDt()
+  local t = (self.duration - self.processingTime) / self.duration
+
+  widget.setImageScale(self.name, util.lerp(t, self.endValue, self.startValue))
+  if t <= 0 then self.hasSucceeded = true return true end
+end
+
+
+
 
 
 -- Animated Widget wrapper
@@ -73,6 +97,14 @@ end
 
 function AnimatedWidget:process(oldValue, newValue, duration)
   return ProcessPromise:new{ name = self.name, startValue = oldValue, endValue = newValue, duration = duration}
+end
+
+function AnimatedWidget:rotate(oldValue, newValue, duration)
+  return RotateImagePromise:new{ name = self.name, startValue = oldValue, endValue = newValue, duration = duration}
+end
+
+function AnimatedWidget:scale(oldValue, newValue, duration)
+  return ScaleImagePromise:new{ name = self.name, startValue = oldValue, endValue = newValue, duration = duration}
 end
 
 animatedWidgets = PromiseKeeper.new()

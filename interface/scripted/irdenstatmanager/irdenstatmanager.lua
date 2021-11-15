@@ -60,7 +60,6 @@ function init()
   loadWeapons(self.irden["gear"])
 
   setHealthAndArmor()
-
 end
 
 function loadPreview()
