@@ -1,0 +1,11 @@
+[
+  {
+    "op": "add",
+    "path": "/priority/-",
+    "value": {
+      "label": "Irden Stat Manager",
+      "icon": "/quickbar/irdenstatsicon.png",
+      "pane": "/interface/scripted/irdenstatmanager/irdenstatmanager.config"
+    }
+  }
+]

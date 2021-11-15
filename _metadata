@@ -1,0 +1,9 @@
+{
+  "version" : "1.5",
+  "author" : "Degranon",
+  "description" : "Set the charasteristics of your characters",
+  "requires" : [],
+  "path" : ".",
+  "name" : "Irden Stats Manager",
+  "includes" : ["StardustLib", "QuickbarMini"]
+}
