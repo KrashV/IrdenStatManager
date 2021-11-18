@@ -60,6 +60,8 @@ function init()
   loadWeapons(self.irden["gear"])
 
   setHealthAndArmor()
+
+  self.tooltipCanvas = widget.bindCanvas("tooltipCanvas")
 end
 
 function loadPreview()
@@ -133,11 +135,16 @@ function deleteBonus(name)
 end
 
 function changeHp()
+  local oldHP = (self.irden.currentHp or 0) / (20 + self.irden["stats"]["endurance"])
+
   self.irden.currentHp = tonumber(widget.getText("lytCharacter.tbxCurrentHp")) or 0
   local newValue = self.irden.currentHp / (20 + self.irden["stats"]["endurance"])
 
-  local aPrgCurrentHp = AnimatedWidget:bind("lytCharacter.prgCurrentHp")
-  animatedWidgets:add(aPrgCurrentHp:process(1, newValue, 1))
+  if (newValue ~= oldHP or not self.firstDraw) then
+    local aPrgCurrentHp = AnimatedWidget:bind("lytCharacter.prgCurrentHp")
+    animatedWidgets:add(aPrgCurrentHp:process(oldHP, newValue, 1))
+    self.firstDraw = true
+  end
 end
 
 function roll20(_, dice)
@@ -528,8 +535,15 @@ end
 function setHealthAndArmor()
   widget.setText("lytCharacter.tbxCurrentHp", self.irden.currentHp)
   widget.setText("lytCharacter.lblMaxHP", string.format("HP:       / %s", 20 + addBonusToStat(self.irden["stats"]["endurance"], "END")))
-  widget.setText("lytCharacter.lblArmour", string.format("Броня: %s / %s", addBonusToStat(widget.getSelectedData("lytArmory.lytDefense.rgArmour").armourBonus, "ARM"), 
-    addBonusToStat(widget.getSelectedData("lytArmory.lytDefense.rgAmulets").blockBonus, "MAGARM")))
+  local physArmour = addBonusToStat(widget.getSelectedData("lytArmory.lytDefense.rgArmour").armourBonus, "ARM")
+  local magArm = addBonusToStat(widget.getSelectedData("lytArmory.lytDefense.rgAmulets").blockBonus, "MAGARM")
+
+  widget.setText("lytCharacter.lblArmour", string.format("Броня: %s / %s", physArmour, magArm))
+  adjustArmourPG(physArmour, magArm)
+end
+
+function adjustArmourPG(p, m)
+  widget.setProgress("lytCharacter.prgCurrentArmour", p / (m + p) )
 end
 
 function addBonusToStat(base, stat)
@@ -580,12 +594,39 @@ function planetTime()
   return (hours + 6) % 24, minutes
 end
 
-function update()
-	hour, minute = planetTime()
+function printTime()
+  hour, minute = planetTime()
 	hour = string.format("%02d", math.floor(hour))
 	minute = string.format("%02d", math.floor(minute))
   
   widget.setText("lytCharacter.lblResult", ""..hour..":"..minute)
 
+end
+
+function update()
+	printTime()
   animatedWidgets:update()
+end
+
+
+
+function cursorOverride(screenPosition)
+  self.tooltipCanvas:clear()
+
+  local w = widget.getChildAt(screenPosition)
+  if w then
+    w = w:sub(2)
+    local wData = widget.getData(w) or {}
+    if not wData.tooltip then return end
+
+    local tooltip = wData.tooltip
+    local wPos = widget.getPosition(w)
+
+    self.tooltipCanvas:drawImage(tooltip.image, vec2.add(wPos, tooltip.imageOffset))
+    self.tooltipCanvas:drawText(tooltip.name, {
+      position = vec2.add(wPos, tooltip.labelOffset),
+      verticalAnchor = "mid",
+      horizontalAnchor = "mid"
+    }, tooltip.fontSize)
+  end
 end

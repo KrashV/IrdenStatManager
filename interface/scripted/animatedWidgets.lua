@@ -59,8 +59,13 @@ RotateImagePromise = RPCPromise:new()
 function RotateImagePromise:finished()
   self.processingTime = self.processingTime + script.updateDt()
   local t = (self.duration - self.processingTime) / self.duration
+  local angle = util.lerp(t, self.endValue, self.startValue)
 
-  widget.setImageRotation(self.name, util.lerp(t, self.endValue, self.startValue))
+  if self.rotationCenter then
+    widget.setPosition(self.name, vec2.add(self.startPosition, vec2.sub(self.rotationCenter, vec2.rotate(self.rotationCenter, angle))))
+  end
+
+  widget.setImageRotation(self.name, angle)
   if t <= 0 then self.hasSucceeded = true return true end
 end
 
@@ -70,8 +75,13 @@ ScaleImagePromise = RPCPromise:new()
 function ScaleImagePromise:finished()
   self.processingTime = self.processingTime + script.updateDt()
   local t = (self.duration - self.processingTime) / self.duration
+  local size = util.lerp(t, self.endValue, self.startValue)
 
-  widget.setImageScale(self.name, util.lerp(t, self.endValue, self.startValue))
+  if self.scalingCenter then
+    widget.setPosition(self.name, vec2.add(self.startPosition, vec2.sub(self.scalingCenter, vec2.mul(self.scalingCenter, size))))
+  end
+
+  widget.setImageScale(self.name, size)
   if t <= 0 then self.hasSucceeded = true return true end
 end
 
@@ -99,12 +109,12 @@ function AnimatedWidget:process(oldValue, newValue, duration)
   return ProcessPromise:new{ name = self.name, startValue = oldValue, endValue = newValue, duration = duration}
 end
 
-function AnimatedWidget:rotate(oldValue, newValue, duration)
-  return RotateImagePromise:new{ name = self.name, startValue = oldValue, endValue = newValue, duration = duration}
+function AnimatedWidget:rotate(oldValue, newValue, duration, rotationCenter)
+  return RotateImagePromise:new{ name = self.name, startValue = oldValue, endValue = newValue, duration = duration, rotationCenter = rotationCenter, startPosition = widget.getPosition(self.name)}
 end
 
-function AnimatedWidget:scale(oldValue, newValue, duration)
-  return ScaleImagePromise:new{ name = self.name, startValue = oldValue, endValue = newValue, duration = duration}
+function AnimatedWidget:scale(oldValue, newValue, duration, scalingCenter)
+  return ScaleImagePromise:new{ name = self.name, startValue = oldValue, endValue = newValue, duration = duration, scalingCenter = scalingCenter, startPosition = widget.getPosition(self.name)}
 end
 
 animatedWidgets = PromiseKeeper.new()
