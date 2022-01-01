@@ -617,7 +617,7 @@ function cursorOverride(screenPosition)
   if w then
     w = w:sub(2)
     local wData = widget.getData(w) or {}
-    if not wData.tooltip then return end
+    if type(wData) ~= "table" or not wData.tooltip then return end
 
     local tooltip = wData.tooltip
     local wPos = widget.getPosition(w)
