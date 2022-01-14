@@ -356,7 +356,7 @@ end
 
 function populatePlayers()
   widget.clearListItems("lytWhoAttack.saPlayers.listPlayers")
-  local players = world.playerQuery(world.entityPosition(player.id()), 40, {
+  local players = world.playerQuery(world.entityPosition(player.id()), 100, {
     withoutEntityId = player.id(),
     order = "nearest",
     boundMode = "position"
@@ -367,12 +367,21 @@ function populatePlayers()
   
   for _, p_id in ipairs(players) do
     local li = widget.addListItem("lytWhoAttack.saPlayers.listPlayers")
+    drawIcon("lytWhoAttack.saPlayers.listPlayers." .. li .. ".contactAvatar", p_id)
     widget.setText("lytWhoAttack.saPlayers.listPlayers." .. li .. ".playerName", world.entityName(p_id))
     widget.setData("lytWhoAttack.saPlayers.listPlayers." .. li, p_id)
   end
 
 end
 
+function drawIcon(canvasName, id)
+	local playerCanvas = widget.bindCanvas(canvasName)
+	local playerPortrait = world.entityPortrait(id, "bust")
+	playerCanvas:clear()
+	for _, layer in ipairs(playerPortrait) do
+		playerCanvas:drawImage(layer.image, {-14, -18})
+	end
+end
 
 function playerSelected(listName)
   local li = widget.getListSelected("lytWhoAttack.saPlayers.listPlayers")
@@ -611,22 +620,24 @@ end
 
 
 function cursorOverride(screenPosition)
-  self.tooltipCanvas:clear()
+  if self.tooltipCanvas then
+    self.tooltipCanvas:clear()
 
-  local w = widget.getChildAt(screenPosition)
-  if w then
-    w = w:sub(2)
-    local wData = widget.getData(w) or {}
-    if type(wData) ~= "table" or not wData.tooltip then return end
+    local w = widget.getChildAt(screenPosition)
+    if w then
+      w = w:sub(2)
+      local wData = widget.getData(w) or {}
+      if type(wData) ~= "table" or not wData.tooltip then return end
 
-    local tooltip = wData.tooltip
-    local wPos = widget.getPosition(w)
+      local tooltip = wData.tooltip
+      local wPos = widget.getPosition(w)
 
-    self.tooltipCanvas:drawImage(tooltip.image, vec2.add(wPos, tooltip.imageOffset))
-    self.tooltipCanvas:drawText(tooltip.name, {
-      position = vec2.add(wPos, tooltip.labelOffset),
-      verticalAnchor = "mid",
-      horizontalAnchor = "mid"
-    }, tooltip.fontSize)
+      self.tooltipCanvas:drawImage(tooltip.image, vec2.add(wPos, tooltip.imageOffset))
+      self.tooltipCanvas:drawText(tooltip.name, {
+        position = vec2.add(wPos, tooltip.labelOffset),
+        verticalAnchor = "mid",
+        horizontalAnchor = "mid"
+      }, tooltip.fontSize)
+    end
   end
 end
