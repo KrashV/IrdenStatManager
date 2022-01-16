@@ -157,11 +157,12 @@ function roll20(_, dice)
 end
 
 function rollStat(_, data)
+  local description = widget.getText("lytCharacter.tbxSkillName")
   world.setProperty("statmanager", {
     type = "statroll", 
     dice = 20,
     rgseed = util.seedTime(),
-    action = data.name,
+    action = description ~= "" and description or data.name,
     source = world.entityName(player.id()),
     bonuses = getBonuses({"ALL", data.tag}, self.irden.stats[data.stat], data.tag)
   })
