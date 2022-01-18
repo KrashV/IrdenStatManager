@@ -1,0 +1,21 @@
+{
+  "id" : "irdeninitiative",
+  "mainQuest" : true,
+  "title" : "Порядок инициативы",
+  "text" : "Ой что-то будет!",
+  "completionText" : "Вы завершили бой! Но надолго ли?",
+  "moneyRange" : [0, 0],
+  "canBeAbandoned" : true,
+  "showAcceptDialog" : false,
+  "showCompleteDialog" : false,
+  "showFailDialog" : false,
+
+  "updateDelta" : 10,
+  "script" : "/quests/scripts/irden/initiative.lua",
+  "scriptConfig" : {
+    "portraits" : {
+      "default" : "player"
+    },
+    "initiative": 0
+  }
+}

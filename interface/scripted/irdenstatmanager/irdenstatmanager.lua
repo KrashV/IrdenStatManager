@@ -3,6 +3,9 @@ require "/interface/scripted/animatedWidgets.lua"
 
 function init()
   math.randomseed(util.seedTime())
+
+  
+
   widget.registerMemberCallback("lytMisc.lytBonuses.lytBaseBonuses.saBonuses.listBonuses", "setBonus", setBonus)
   widget.registerMemberCallback("lytMisc.lytBonuses.lytCustomBonuses.saBonuses.listBonuses", "setBonus", setBonus)
   widget.registerMemberCallback("lytMisc.lytBonuses.lytCustomBonuses.saBonuses.listBonuses", "deleteBonus", deleteBonus)
@@ -78,6 +81,8 @@ end
 
 function loadPreview()
 	widget.setText("lytCharacter.lblName", world.entityName(player.id()))
+  widget.setText("lytCharacter.tbxFightName", self.irden.fightName or "")
+
 	local portrait = world.entityPortrait(player.id(), "full")
 	for _, part in ipairs(portrait) do
 		local li = widget.addListItem("lytCharacter.lstPreview")
@@ -234,8 +239,8 @@ function addBonus()
 
     widget.setVisible("lytMisc.lytBonuses", true)
     widget.setVisible("lytMisc.lytAddNewSkill", false)
-    setHealthAndArmor()
     loadBonuses()
+    setHealthAndArmor()
   end
 end
 
@@ -254,10 +259,11 @@ end
 
 
 function changeHp()
-  local oldHP = (self.irden.currentHp or 0) / (20 + self.irden["stats"]["endurance"])
+  local maxHp = 20 + addBonusToStat(self.irden["stats"]["endurance"], "END")
+  local oldHP = (self.irden.currentHp or 0) / maxHp
 
   self.irden.currentHp = tonumber(widget.getText("lytCharacter.tbxCurrentHp")) or 0
-  local newValue = self.irden.currentHp / (20 + self.irden["stats"]["endurance"])
+  local newValue = self.irden.currentHp / maxHp
 
   if (newValue ~= oldHP or not self.firstDraw) then
     local aPrgCurrentHp = AnimatedWidget:bind("lytCharacter.prgCurrentHp")
@@ -598,6 +604,7 @@ function setHealthAndArmor()
 
   widget.setText("lytCharacter.lblArmour", string.format("Броня: %s / %s", physArmour, magArm))
   adjustArmourPG(physArmour, magArm)
+  changeHp()
 end
 
 function adjustArmourPG(p, m)
@@ -605,8 +612,8 @@ function adjustArmourPG(p, m)
 end
 
 function addBonusToStat(base, stat)
-  for _, bonusGroup in ipairs(self.irden.bonusGroups) do
-    for _, bonus in ipairs(bonusGroup) do
+  for groupName, bonusGroup in pairs(self.irden.bonusGroups) do
+    for _, bonus in ipairs(bonusGroup.bonuses) do
       if bonus.tag == stat and bonus.ready then
         base = base + bonus.value
       end
@@ -616,15 +623,78 @@ function addBonusToStat(base, stat)
   return base
 end
 
+--[[
+  Fight scene functions
+]]
 
+function changeFightName()
+  self.irden.fightName = widget.getText("lytCharacter.tbxFightName")
+end
+
+function enterFight()
+  if self.irden.fightName and self.irden.fightName ~= "" then
+    local fights = world.getProperty("currentFight") or {}
+    local currentFight = fights[self.irden.fightName] or {
+      players = {},
+      started = false,
+      currentPlayer = nil,
+      done = false
+    }
+
+    local initiative = math.random(20)
+    local bonuses = getBonuses({"ALL", "INITIATIVE"}, 0, "INITIATIVE")
+
+    if not currentFight.players[player.uniqueId()] then
+      world.setProperty("statmanager", {
+        type = "initiative", 
+        dice = 20,
+        rgseed = util.seedTime(),
+        initiative = initiative,
+        action = "Инициативы",
+        source = world.entityName(player.id()),
+        bonuses = bonuses
+      })
+    end
+    
+    player.setProperty("irdeninitiative", calculateBonuses(initiative, bonuses))
+    player.setProperty("irdenfightName", self.irden.fightName)
+    player.startQuest("irdeninitiative")
+  end
+end
+
+function leaveFight()
+  player.setProperty("irdenfightName", self.irden.fightName)
+  world.sendEntityMessage(player.id(), "leaveFight")
+end
+
+function clearFight()
+  player.setProperty("irdenfightName", self.irden.fightName)
+  world.sendEntityMessage(player.id(), "clearFight")
+end
+
+function nextTurn()
+  player.setProperty("irdenfightName", self.irden.fightName)
+  world.sendEntityMessage(player.id(), "nextTurn", player.uniqueId())
+end
+
+
+--[[
+  Util Functions
+]]
+
+function calculateBonuses(value, bonuses)
+  local sum = value
+  for i = 1, #bonuses, 2 do
+    sum = sum + bonuses[i]
+  end
+  return sum
+end
 
 function uninit()
   self.irden["gear"].isAutomatic = widget.getChecked("lytArmory.lytWeapons.cbxIsAutomatic")
   player.setProperty("irden", self.irden)
 end
 
-
---Util
 function findIndexAtValue(t, attr, value)
   for i, v in ipairs(t) do
     if v[attr] == value then
