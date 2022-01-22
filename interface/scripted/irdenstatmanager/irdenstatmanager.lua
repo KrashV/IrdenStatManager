@@ -139,6 +139,8 @@ function loadBonuses()
         callback = "changeBonusLayout",
         data = data
       })
+    else
+      widget.removeChild("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. groupListItem, "bonusIsActive")
     end
 
 
@@ -166,6 +168,28 @@ function loadBonuses()
         widget.setFontColor("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", "yellow")
       else
         isGroupFullyReady = false
+      end
+
+      if group.isCustom then
+        local widgetName = math.random(99999) .. groupName .. bonus.name
+        widget.addChild("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li, {
+          type = "spinner",
+          position = {150, 5},
+          upOffset = 16,
+          callback = "changeBonus",
+          data = {
+            group = groupName,
+            bonus = bonus.name
+          }
+        }, widgetName)
+        widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. "." .. widgetName .. ".up", {
+          group = groupName,
+          bonus = bonus.name
+        })
+        widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. "." .. widgetName .. ".down", {
+          group = groupName,
+          bonus = bonus.name
+        })
       end
     end
 
@@ -206,6 +230,28 @@ function deleteBonus(_, data)
 
  setHealthAndArmor()
 end
+
+changeBonus = {}
+function changeBonus.up(_, data, c)
+  if self.selectedLine then
+    local selectedTab = widget.getSelectedData("lytMisc.lytBonuses.rgBonusTypes")
+    local index = findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "name", data.bonus)
+    local value = self.irden.bonusGroups[data.group].bonuses[index].value
+    self.irden.bonusGroups[data.group].bonuses[index].value = value + 1
+    widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value + 1)
+  end
+end
+
+function changeBonus.down(_, data)
+  if self.selectedLine then
+    local selectedTab = widget.getSelectedData("lytMisc.lytBonuses.rgBonusTypes")
+    local index = findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "name", data.bonus)
+    local value = self.irden.bonusGroups[data.group].bonuses[index].value
+    self.irden.bonusGroups[data.group].bonuses[index].value = value - 1
+    widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value - 1)
+  end
+end
+
 
 function addBonusGroup()
   local groupName = widget.getText("lytMisc.lytBonuses.lytCustomBonuses.tbxGroupName")
