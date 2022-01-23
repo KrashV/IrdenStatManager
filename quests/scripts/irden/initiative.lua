@@ -60,7 +60,9 @@ function questComplete()
 end
 
 function update(dt)
-  populateList()
+  if self.fightName then
+    populateList()
+  end
 end
 
 function uninit()
