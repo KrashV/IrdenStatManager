@@ -241,6 +241,7 @@ function changeBonus.up(_, data)
     local value = self.irden.bonusGroups[data.group].bonuses[index].value
     self.irden.bonusGroups[data.group].bonuses[index].value = value + 1
     widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value + 1)
+    setHealthAndArmor()
   end
 end
 
@@ -251,6 +252,7 @@ function changeBonus.down(_, data)
     local value = self.irden.bonusGroups[data.group].bonuses[index].value
     self.irden.bonusGroups[data.group].bonuses[index].value = value - 1
     widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value - 1)
+    setHealthAndArmor()
   end
 end
 
@@ -503,7 +505,7 @@ function playerSelected(listName)
       msg.defensePlayer = player.id()
       msg.attackDesc = widget.getData("lytAttacks." .. widget.getSelectedData("lytAttacks.rgAttackTypes") .. "." .. self.btnName).desc
       msg.attackType = widget.getSelectedOption("lytAttacks.rgAttackTypes")
-      world.sendEntityMessage(id, "irdenInteract","ScriptPane", msg)
+      world.sendEntityMessage(id, "irdenInteract", _, msg)
     end
     
     widget.setVisible("lytWhoAttack", false)
@@ -572,7 +574,6 @@ function getBonusByTag(tag)
       if bonus.tag == tag then return bonus end
     end
   end
-  sb.logError("Could not find bonus by tag %s", tag)
 
   return {
     name = "",
