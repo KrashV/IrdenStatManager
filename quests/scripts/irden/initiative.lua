@@ -110,7 +110,7 @@ function populateList()
     if currentFight.currentPlayer and currentFight.players[currentFight.currentPlayer] then currentPlayerName = currentFight.players[currentFight.currentPlayer].name end
 
     local objectiveList = not next(currentFight.players) and {{"Тут никого!", false}} or {
-      {"Ход игрока ".. currentPlayerName, false}
+      {"Ход игрока ^orange;".. currentPlayerName .. "^reset;", false}
     }
 
     for _, fighter in ipairs(sortedKeys(currentFight.players)) do 
@@ -119,8 +119,10 @@ function populateList()
     end
     quest.setObjectiveList(objectiveList)
 
-    if currentFight.currentPlayer and currentFight.players[currentFight.currentPlayer] then
+    if currentFight.currentPlayer and currentFight.players[currentFight.currentPlayer] and player.getProperty("toShowCurrentPlayerIndicator", true) then
       quest.setIndicators({currentFight.currentPlayer})
+    else
+      quest.setIndicators({})
     end
 end
 
@@ -131,6 +133,10 @@ function sortedKeys(query)
     table.insert(keys, v)
   end
 
-  table.sort(keys, function(a, b) return a.initiative > b.initiative end)
+  table.sort(keys, function(a, b) 
+    if a.initiative ~= b.initiative then return a.initiative > b.initiative 
+      else return a.uniqueId  > b.uniqueId 
+    end
+  end)
   return keys
 end

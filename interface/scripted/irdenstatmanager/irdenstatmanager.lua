@@ -82,6 +82,7 @@ end
 function loadPreview()
 	widget.setText("lytCharacter.lblName", world.entityName(player.id()))
   widget.setText("lytCharacter.tbxFightName", self.irden.fightName or "")
+  widget.setChecked("lytCharacter.btnShowCurrentPlayer", player.getProperty("toShowCurrentPlayerIndicator", true))
 
 	local portrait = world.entityPortrait(player.id(), "full")
 	for _, part in ipairs(portrait) do
@@ -685,6 +686,10 @@ function resources(_, data)
   })
 end
 
+
+function showCurrentPlayer()
+  player.setProperty("toShowCurrentPlayerIndicator", widget.getChecked("lytCharacter.btnShowCurrentPlayer"))
+end
 
 --[[
   Util Functions
