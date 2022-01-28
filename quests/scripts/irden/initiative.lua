@@ -21,10 +21,8 @@ function init()
   end)
 
   message.setHandler("clearFight", function(_, isLocal)
-    local fights = world.getProperty("currentFight") or {}
-    fights[self.fightName] = nil
 
-    world.setProperty("currentFight", fights)
+    world.setProperty("currentFight", nil)
     quest.complete()
   end)
 

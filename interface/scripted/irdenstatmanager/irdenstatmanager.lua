@@ -24,7 +24,6 @@ function init()
     widget.setSelectedOption("rgTabs", 0)
   end
   
-  loadPreview()
 
   -- FIX THE GROUPS
   if self.irden and not self.irden.bonusGroups and self.irden.bonuses then
@@ -68,6 +67,7 @@ function init()
     self.irden.currentHp = cHp
   end
 
+  loadPreview()
   loadBonuses()
   loadWeapons(self.irden["gear"])
 
@@ -668,6 +668,21 @@ end
 function nextTurn()
   player.setProperty("irdenfightName", self.irden.fightName)
   world.sendEntityMessage(player.id(), "nextTurn", player.uniqueId())
+end
+
+
+
+function resources(_, data)
+  local type = data.type
+
+  world.setProperty("statmanager", {
+    type = "resourceEvent", 
+    rgseed = util.seedTime(),
+    action = data.action,
+    source = world.entityName(player.id()),
+    bonuses = getBonuses({"ALL", data.tag}, self.irden.stats[data.stat], data.tag),
+    data = data
+  })
 end
 
 
