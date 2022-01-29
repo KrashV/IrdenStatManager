@@ -115,8 +115,10 @@ function loadBonuses()
   widget.clearListItems("lytMisc.lytBonuses.lytStuffBonuses.saBonuses.listBonuses")
   widget.clearListItems("lytMisc.lytBonuses.lytActionsBonuses.saBonuses.listBonuses")
 
-  for groupName, group in pairs(self.irden.bonusGroups) do
-    local isGroupFullyReady = true
+  local sourtedGroups = sortedKeys(self.irden.bonusGroups)
+
+  for _, groupName in ipairs(sourtedGroups) do
+    local group = self.irden.bonusGroups[groupName]
 
 
     local bonusType = group.isCustom and "lytCustomBonuses" or (group.type == "stuff" and "lytStuffBonuses" or group.type == "actions" and "lytActionsBonuses" or "lytBaseBonuses")
@@ -146,59 +148,79 @@ function loadBonuses()
       widget.removeChild("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. groupListItem, "bonusIsActive")
     end
 
+    -- Add hide button
+    widget.addChild("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. groupListItem, {
+      type = "button",
+      checkable = true,
+      checked = not not group.hidden,
+      position = {160, 5},
+      base = "/interface/scripted/irdenstatmanager/buttonhide.png",
+      hover = "/interface/scripted/irdenstatmanager/buttonhidehover.png",
+      baseImageChecked = "/interface/scripted/irdenstatmanager/buttonshow.png",
+      hoverImageChecked = "/interface/scripted/irdenstatmanager/buttonshowhover.png",
+      callback = "hideBonusesInGroup",
+      data = data
+    })
 
-    for j, bonus in ipairs(group.bonuses) do
-      local li = widget.addListItem("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses")
-      widget.setText("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", bonus.name)
-      widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", bonus.name)
-      widget.setText("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusValue", bonus.value)
-      widget.setPosition("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", {35, 5})
-      widget.setPosition("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", {13, 5})
-      widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", {
-        type = "bonus",
-        group = groupName,
-        name = bonus.name
-      })
-      widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".btnDeleteBonus", {
-        type = "bonus",
-        group = groupName,
-        name = bonus.name
-      })
-      widget.setChecked("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", bonus.ready)
-      self.irden.bonusGroups[groupName].bonuses[j].listId = li
+    if not group.hidden then
+      for j, bonus in ipairs(group.bonuses) do
+        local li = widget.addListItem("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses")
+        widget.setText("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", bonus.name)
+        widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", bonus.name)
+        widget.setText("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusValue", bonus.value)
+        widget.setPosition("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", {35, 5})
+        widget.setPosition("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", {13, 5})
+        widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", {
+          type = "bonus",
+          group = groupName,
+          name = bonus.name
+        })
+        widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".btnDeleteBonus", {
+          type = "bonus",
+          group = groupName,
+          name = bonus.name
+        })
+        widget.setChecked("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", bonus.ready)
+        self.irden.bonusGroups[groupName].bonuses[j].listId = li
 
-      if bonus.ready then
-        widget.setFontColor("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", "yellow")
-      else
-        isGroupFullyReady = false
-      end
+        if bonus.ready then
+          widget.setFontColor("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", "yellow")
+        end
 
-      if group.isCustom or group.type == "stuff" or group.type == "actions" then
-        local widgetName = math.random(99999) .. groupName .. bonus.name
+        if group.isCustom or group.type == "stuff" or group.type == "actions" then
+          local widgetName = math.random(99999) .. groupName .. bonus.name
 
-        widget.addChild("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li, {
-          type = "spinner",
-          position = {150, 5},
-          upOffset = 16,
-          callback = "changeBonus",
-          data = {
+          widget.addChild("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li, {
+            type = "spinner",
+            position = {150, 5},
+            upOffset = 16,
+            callback = "changeBonus",
+            data = {
+              group = groupName,
+              bonus = bonus.name
+            }
+          }, widgetName)
+          widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. "." .. widgetName .. ".up", {
             group = groupName,
             bonus = bonus.name
-          }
-        }, widgetName)
-        widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. "." .. widgetName .. ".up", {
-          group = groupName,
-          bonus = bonus.name
-        })
-        widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. "." .. widgetName .. ".down", {
-          group = groupName,
-          bonus = bonus.name
-        })
+          })
+          widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. "." .. widgetName .. ".down", {
+            group = groupName,
+            bonus = bonus.name
+          })
+        end
       end
     end
-
-    widget.setChecked("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. groupListItem .. ".bonusIsActive", isGroupFullyReady)
+    widget.setChecked("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. groupListItem .. ".bonusIsActive", checkIfGroupIsFullyReady(groupName))
   end
+end
+
+
+function checkIfGroupIsFullyReady(groupName)
+  for j, bonus in ipairs(self.irden.bonusGroups[groupName].bonuses) do
+    if not bonus.ready then return false end
+  end
+  return true
 end
 
 function setBonus(_, data)
@@ -295,6 +317,16 @@ function addBonus()
   end
 end
 
+function hideBonusesInGroup(name, data)
+  if self.selectedLine then
+    if data.type == "group" then
+      local selectedTab = widget.getSelectedData("lytMisc.lytBonuses.rgBonusTypes")
+      local isChecked = widget.getChecked("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. "." .. name)
+      self.irden.bonusGroups[data.name].hidden = isChecked
+    end
+    loadBonuses()
+  end
+end
 
 function changeBonusLayout(name, data)
   local isDisplayingBonuses = widget.active("lytMisc.lytBonuses")
@@ -326,7 +358,7 @@ end
 function roll20(_, dice)
   world.setProperty("statmanager", {
     type = "diceroll", 
-    dice = self.irden["stats"]["rollany"],
+    dice = tonumber(widget.getText("lytCharacter.tbxStatRollany")) or 0,
     rgseed = util.seedTime(),
     source = world.entityName(player.id())
   })
@@ -383,7 +415,6 @@ function changeGearType(id, data)
 	end
 	widget.setVisible("lytArmory." .. data, true)
 end
-
 
 function lineSelected(listName)
   local selectedTab = widget.getSelectedData("lytMisc.lytBonuses.rgBonusTypes")
@@ -553,7 +584,7 @@ function getBonuses (dataTags, ...)
   for groupName, group in pairs(self.irden.bonusGroups) do
     for i, bonus in ipairs(group.bonuses) do
       local bonusType = group.isCustom and "lytCustomBonuses" or "lytBaseBonuses"
-      if widget.getChecked("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. bonus.listId .. ".bonusIsActive") and has_value(dataTags, bonus.tag) then
+      if bonus.ready and has_value(dataTags, bonus.tag) then
         table.insert(bonuses, bonus.value)
         table.insert(bonuses, bonus.name)
         sum = sum + bonus.value
@@ -772,4 +803,16 @@ function cursorOverride(screenPosition)
       }, tooltip.fontSize)
     end
   end
+end
+
+
+
+function sortedKeys(query)
+  local keys = {}
+  for k,v in pairs(query) do
+    table.insert(keys, k)
+  end
+  
+  table.sort(keys)
+  return keys
 end
