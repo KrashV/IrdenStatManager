@@ -235,8 +235,11 @@ function setBonus(_, data)
         widget.setFontColor("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. bonus.listId .. ".bonusName", isChecked and "yellow" or "white")
       end
     elseif data.type == "bonus" then
-      self.irden.bonusGroups[data.group].bonuses[findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "listId", self.selectedLine)].ready = isChecked
-      widget.setFontColor("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusName", isChecked and "yellow" or "white")
+      local index = findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "listId", self.selectedLine)
+      if index then
+        self.irden.bonusGroups[data.group].bonuses[index].ready = isChecked
+        widget.setFontColor("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusName", isChecked and "yellow" or "white")
+      end
     end
   end
 
@@ -248,7 +251,10 @@ function deleteBonus(_, data)
     if data.type == "group" then
       self.irden.bonusGroups[data.name] = nil
     elseif data.type == "bonus" then
-      table.remove(self.irden.bonusGroups[data.group].bonuses, findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "listId", self.selectedLine))
+      local index = findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "listId", self.selectedLine)
+      if index then
+        table.remove(self.irden.bonusGroups[data.group].bonuses, index)
+      end
     end
     loadBonuses()
   end
@@ -261,10 +267,12 @@ function changeBonus.up(_, data)
   if self.selectedLine and data then
     local selectedTab = widget.getSelectedData("lytMisc.lytBonuses.rgBonusTypes")
     local index = findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "name", data.bonus)
-    local value = self.irden.bonusGroups[data.group].bonuses[index].value
-    self.irden.bonusGroups[data.group].bonuses[index].value = value + 1
-    widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value + 1)
-    setHealthAndArmor()
+    if index then
+      local value = self.irden.bonusGroups[data.group].bonuses[index].value
+      self.irden.bonusGroups[data.group].bonuses[index].value = value + 1
+      widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value + 1)
+      setHealthAndArmor()
+    end
   end
 end
 
@@ -272,10 +280,12 @@ function changeBonus.down(_, data)
   if self.selectedLine and data then
     local selectedTab = widget.getSelectedData("lytMisc.lytBonuses.rgBonusTypes")
     local index = findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "name", data.bonus)
-    local value = self.irden.bonusGroups[data.group].bonuses[index].value
-    self.irden.bonusGroups[data.group].bonuses[index].value = value - 1
-    widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value - 1)
-    setHealthAndArmor()
+    if index then
+      local value = self.irden.bonusGroups[data.group].bonuses[index].value
+      self.irden.bonusGroups[data.group].bonuses[index].value = value - 1
+      widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value - 1)
+      setHealthAndArmor()
+    end
   end
 end
 
@@ -501,15 +511,25 @@ function populatePlayers()
     order = "nearest",
     boundMode = "position"
   })
-  
+
+  -- Sort by name
+  for k, p_id in ipairs(players) do
+    players[k] = {
+      id = p_id,
+      name = world.entityName(p_id)
+    }
+  end
+
+  table.sort(players, function(a, b) return a.name < b.name end)
+
   local li = widget.addListItem("lytWhoAttack.saPlayers.listPlayers")
   widget.setText("lytWhoAttack.saPlayers.listPlayers." .. li .. ".playerName", "В воздух")
   
-  for _, p_id in ipairs(players) do
+  for _, p in ipairs(players) do
     local li = widget.addListItem("lytWhoAttack.saPlayers.listPlayers")
-    drawIcon("lytWhoAttack.saPlayers.listPlayers." .. li .. ".contactAvatar", p_id)
-    widget.setText("lytWhoAttack.saPlayers.listPlayers." .. li .. ".playerName", world.entityName(p_id))
-    widget.setData("lytWhoAttack.saPlayers.listPlayers." .. li, p_id)
+    drawIcon("lytWhoAttack.saPlayers.listPlayers." .. li .. ".contactAvatar", p.id)
+    widget.setText("lytWhoAttack.saPlayers.listPlayers." .. li .. ".playerName", p.name)
+    widget.setData("lytWhoAttack.saPlayers.listPlayers." .. li, p.id)
   end
 
 end
@@ -667,7 +687,7 @@ function enterFight()
     }
 
     local initiative = math.random(20)
-    local bonuses = getBonuses({"ALL", "INITIATIVE"}, 0, "INITIATIVE")
+    local bonuses = getBonuses({"INITIATIVE"}, 0, "INITIATIVE")
 
     if not currentFight.players[player.uniqueId()] then
       world.setProperty("statmanager", {
