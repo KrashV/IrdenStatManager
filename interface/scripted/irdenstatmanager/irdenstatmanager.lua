@@ -3,8 +3,8 @@ require "/interface/scripted/animatedWidgets.lua"
 
 function init()
   math.randomseed(util.seedTime())
-
   
+  widget.setButtonEnabled("lytCharacter.btnClearFight", player.isAdmin())
 
   widget.registerMemberCallback("lytMisc.lytBonuses.lytBaseBonuses.saBonuses.listBonuses", "setBonus", setBonus)
   widget.registerMemberCallback("lytMisc.lytBonuses.lytCustomBonuses.saBonuses.listBonuses", "setBonus", setBonus)
@@ -687,7 +687,7 @@ function enterFight()
     }
 
     local initiative = math.random(20)
-    local bonuses = getBonuses({"INITIATIVE"}, 0, "INITIATIVE")
+    local bonuses = getBonuses({"INITIATIVE"})
 
     if not currentFight.players[player.uniqueId()] then
       world.setProperty("statmanager", {
@@ -695,8 +695,8 @@ function enterFight()
         dice = 20,
         rgseed = util.seedTime(),
         initiative = initiative,
-        action = "Инициативы",
         source = world.entityName(player.id()),
+        fightName = self.irden.fightName,
         bonuses = bonuses
       })
     end
@@ -709,6 +709,8 @@ end
 
 function leaveFight()
   player.setProperty("irdenfightName", self.irden.fightName)
+  widget.setText("lytCharacter.tbxFightName", "")
+  self.irden.fightName = nil
   world.sendEntityMessage(player.id(), "leaveFight")
 end
 

@@ -69,7 +69,7 @@ function nextTurn(pUUID, toLeave)
   local fights = world.getProperty("currentFight") or {}
   local currentFight = fights[self.fightName] or self.emptyFight
 
-  if currentFight.currentPlayer == pUUID then
+  if currentFight.currentPlayer == pUUID or player.isAdmin() then
 
     -- in case we actually moved our turn, the battle starts
     if not toLeave then currentFight.started = true end
