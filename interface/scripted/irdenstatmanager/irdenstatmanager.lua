@@ -12,9 +12,10 @@ function init()
 
   self.irden = player.getProperty("irden")
 
+  self.characterStatsTextboxes = config.getParameter("characterStatsTextboxes")
   self.characterStats = config.getParameter("characterStats")
   self.tabs = config.getParameter("tabs")
-  self.attackTypes = {"Melee", "Ranged", "Magic"}
+  self.attackTypes = {"Melee", "Ranged", "Magic", "Custom", "AddNew"}
   self.selectedLine = nil
 
   if config.getParameter("defensePlayer") then 
@@ -69,6 +70,7 @@ function init()
 
   loadPreview()
   loadBonuses()
+  loadAttacks()
   loadWeapons(self.irden["gear"])
 
   setHealthAndArmor()
@@ -92,7 +94,7 @@ function loadPreview()
 end
 
 function loadStats(stats)
-  for widgetName, statName in pairs(self.characterStats) do
+  for widgetName, statName in pairs(self.characterStatsTextboxes) do
 	  widget.setText("lytCharacter." .. widgetName, stats[statName] or "0")
   end
 end
@@ -106,6 +108,32 @@ function loadWeapons(gear)
   widget.setSelectedOption("lytArmory.lytDefense.rgShields", gear["armour"]["shield"])
   widget.setSelectedOption("lytArmory.lytDefense.rgAmulets", gear["armour"]["amulet"])
   widget.setChecked("lytArmory.lytWeapons.cbxIsAutomatic", not not self.irden["gear"].isAutomatic)
+end
+
+
+function loadAttacks()
+  widget.removeAllChildren("lytAttacks.lytCustomAttack.lytAttacks")
+  if self.irden.attacks then
+    local position = {30, 180}
+    for _, attack in ipairs(self.irden.attacks) do
+      sb.logInfo(sb.print(attack))
+      position[2] = position[2] - 20
+
+      widget.addChild("lytAttacks.lytCustomAttack.lytAttacks", {
+        type = "button",
+        position = position,
+        caption = attack.desc,
+        base = "/interface/button.png",
+        hover = "/interface/buttonhover.png",
+        callback = "attack",
+        data = attack
+      })
+      
+      if position[2] <= 80 then
+        position = {position[1] + 60, 180}
+      end
+    end
+  end
 end
 
 
@@ -431,35 +459,29 @@ function lineSelected(listName)
   self.selectedLine = widget.getListSelected("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses." .. listName)
 end
 
+
+
 function attack(btnName, data)
 
   -- Calculate the attack bonus
-  local baseAttackBonus = 0
+  local baseAttackBonus = self.irden.stats[self.characterStats[data.stat]] or 0
   local weaponAttackBonus = 0
   local armourAttackBonus = 0
   local attackBonus = getBonusByTag(data.attackBonus).value
   local damageBonus = getBonusByTag(data.damageBonus).value
 
-  local baseDamageBonus = 0
+  local baseDamageBonus = math.max((addBonusToStat(baseAttackBonus, data.stat) + addBonusToStat(self.irden.stats[self.characterStats[data.dmgStat]] or 0, data.dmgStat)) // data.dmgDivider, 1)
   local weaponDamageBonus = 0
   local shieldDamageBonus = 0
-  local stat = ""
-
 
   if data.type == "melee" then
-    stat = "STR"
-    baseAttackBonus = self.irden.stats.strength
     weaponAttackBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgMeleeWeapons." .. self.irden["gear"]["weapon"]["melee"]).attackBonus).value
 
-    baseDamageBonus = math.max((addBonusToStat(self.irden.stats.strength, "STR") + addBonusToStat(self.irden.stats.endurance, "END")) // 4, 1)
     weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgMeleeWeapons." .. self.irden["gear"]["weapon"]["melee"]).damageBonus).value
     shieldDamageBonus = getBonusByTag(widget.getData("lytArmory.lytDefense.rgShields." .. self.irden["gear"]["armour"]["shield"]).damageBonus).value
   elseif data.type == "ranged" then
-    stat = "PER"
-    baseAttackBonus = self.irden.stats.perception
     weaponAttackBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgRangedWeapons." .. self.irden["gear"]["weapon"]["ranged"]).attackBonus).value
 
-    baseDamageBonus = math.max((addBonusToStat(self.irden.stats.reflexes, "REF") + addBonusToStat(self.irden.stats.perception, "PER")) // 4, 1)
     weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgRangedWeapons." .. self.irden["gear"]["weapon"]["ranged"]).damageBonus).value
     shieldDamageBonus = getBonusByTag(widget.getData("lytArmory.lytDefense.rgShields." .. self.irden["gear"]["armour"]["shield"]).damageBonus).value
 
@@ -469,11 +491,8 @@ function attack(btnName, data)
     end
 
   elseif data.type == "magic" then
-    stat = "MAG"
-    baseAttackBonus = self.irden.stats.magic
     weaponAttackBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgMagicWeapons." .. self.irden["gear"]["weapon"]["magic"]).attackBonus).value
 
-    baseDamageBonus = math.max((addBonusToStat(self.irden.stats.magic, "MAG") + addBonusToStat(self.irden.stats.willpower, "WIL")) // 4, 1)
     weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgMagicWeapons." .. self.irden["gear"]["weapon"]["magic"]).damageBonus).value
     shieldDamageBonus = 0
   end
@@ -485,11 +504,10 @@ function attack(btnName, data)
     dice = 20,
     rgseed = util.seedTime(),
     source = world.entityName(player.id()),
-    action = widget.getData("lytAttacks." .. widget.getSelectedData("lytAttacks.rgAttackTypes") .. "." .. btnName).desc,
-    bonuses = getBonuses({"ATTACK", table.unpack(data.tags)}, baseAttackBonus, stat, weaponAttackBonus, "Оружие", attackBonus, "Атака"),
+    action = data.desc,
+    bonuses = getBonuses({"ATTACK", table.unpack(data.tags)}, baseAttackBonus, data.stat, weaponAttackBonus, "Оружие", attackBonus, "Атака"),
     damageBonuses = getBonuses({"DAMAGE"}, baseDamageBonus, "База", weaponDamageBonus, "Оружие", damageBonus, "Атака", shieldDamageBonus, "Щит")
   }
-
   --dirty hack after dropping bonuses
   if btnName == "btnRangedPiercing" then
     local rangedPiercingDebuff = findIndexAtValue(self.irden.bonusGroups["Общие"].bonuses, "name", "Бывший пробивной выстрел")
@@ -549,7 +567,6 @@ function playerSelected(listName)
     local id = widget.getData("lytWhoAttack.saPlayers.listPlayers." .. li)
     
     self.attackDataToSend.target = id and world.entityName(id) or nil
-    
     world.setProperty("statmanager", self.attackDataToSend)
   
     if id then
@@ -637,8 +654,10 @@ end
 
 function clearSkills()
   self.irden.bonusGroups = root.assetJson("/irden_bonuses.config")
+  self.irden.attacks = nil
   setHealthAndArmor()
   loadBonuses()
+  loadAttacks()
 end
 
 function setHealthAndArmor()
@@ -743,6 +762,62 @@ end
 function showCurrentPlayer()
   player.setProperty("toShowCurrentPlayerIndicator", widget.getChecked("lytCharacter.btnShowCurrentPlayer"))
 end
+
+--[[ 
+  Custom attacks
+]]
+
+function addAttack()
+  local attackName = widget.getText("lytAttacks.lytAddNewAttack.tbxAttackName")
+  if attackName and attackName ~= "" then
+    local stat = widget.getSelectedData("lytAttacks.lytAddNewAttack.rgAttackTags")
+    local dmgStat = widget.getSelectedData("lytAttacks.lytAddNewAttack.rgDamageTags")
+    local type = widget.getSelectedData("lytAttacks.lytAddNewAttack.rgAttackType")
+    local newBonusTag = "CUST_ATTACK_" .. attackName .. "_" .. math.random(1000)
+    
+    if not self.irden.bonusGroups["Особые атаки"] then
+      self.irden.bonusGroups["Особые атаки"] = {
+        isCustom = false,
+        type = "actions",
+        bonuses = {}
+      }
+    end
+
+    if not self.irden.attacks then self.irden.attacks = {} end
+
+    table.insert(self.irden.attacks, {
+      type = type,
+      desc = attackName,
+      stat = stat,
+      dmgStat = dmgStat,
+      dmgDivider = tonumber(widget.getText("lytAttacks.lytAddNewAttack.tbxDamageDivider")) or 1,
+      attackBonus = newBonusTag .. "_ATTACK",
+      damageBonus = newBonusTag .. "_DAMAGE",
+      tags = {"ALL", stat}
+    })
+
+
+    table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
+      name = attackName .. ": попадание",
+      value = 0,
+      tag = newBonusTag .. "_ATTACK"
+    })
+    table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
+      name = attackName .. ": урон",
+      value = 0,
+      tag = newBonusTag .. "_DAMAGE"
+    })
+
+
+    loadBonuses()
+    loadAttacks()
+    changeAttackType(_, "lytCustomAttack")
+
+    widget.setText("lytAttacks.lytAddNewAttack.tbxAttackName", "")
+  end
+end
+
+
 
 --[[
   Util Functions
