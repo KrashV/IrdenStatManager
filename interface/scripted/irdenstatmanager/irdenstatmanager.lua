@@ -116,7 +116,6 @@ function loadAttacks()
   if self.irden.attacks then
     local position = {30, 180}
     for _, attack in ipairs(self.irden.attacks) do
-      sb.logInfo(sb.print(attack))
       position[2] = position[2] - 20
 
       widget.addChild("lytAttacks.lytCustomAttack.lytAttacks", {
@@ -391,6 +390,11 @@ function changeHp()
     animatedWidgets:add(aPrgCurrentHp:process(oldHP, newValue, 1))
     self.firstDraw = true
   end
+  
+  local third = maxHp / 3
+  local partImage = self.irden.currentHp >= maxHp and "" or (self.irden.currentHp < third and "3" or (self.irden.currentHp > 2 * third and "1" or "2"))
+
+  widget.setImage("lytCharacter.imgStatHp", string.format("/interface/scripted/irdenstatmanager/staticons/icon_con%s.png", partImage))
 end
 
 function roll20(_, dice)
