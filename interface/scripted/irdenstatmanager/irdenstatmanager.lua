@@ -497,14 +497,13 @@ function attack(btnName, data)
     shieldDamageBonus = 0
   end
   
-  self.btnName = btnName
-  
   self.attackDataToSend = {
     type = "actionroll", 
     dice = 20,
     rgseed = util.seedTime(),
     source = world.entityName(player.id()),
     action = data.desc,
+    attackType = data.type,
     bonuses = getBonuses({"ATTACK", table.unpack(data.tags)}, baseAttackBonus, data.stat, weaponAttackBonus, "Оружие", attackBonus, "Атака"),
     damageBonuses = getBonuses({"DAMAGE"}, baseDamageBonus, "База", weaponDamageBonus, "Оружие", damageBonus, "Атака", shieldDamageBonus, "Щит")
   }
@@ -572,8 +571,8 @@ function playerSelected(listName)
     if id then
       local msg = root.assetJson("/interface/scripted/irdenstatmanager/irdenstatmanager.config")
       msg.defensePlayer = player.id()
-      msg.attackDesc = widget.getData("lytAttacks." .. widget.getSelectedData("lytAttacks.rgAttackTypes") .. "." .. self.btnName).desc
-      msg.attackType = widget.getSelectedOption("lytAttacks.rgAttackTypes")
+      msg.attackDesc = self.attackDataToSend.action
+      msg.attackType = self.attackDataToSend.attackType == "melee" and -1 or (self.attackDataToSend.attackType == "ranged" and 0 or 1)
       world.sendEntityMessage(id, "irdenInteract", _, msg)
     end
     
@@ -654,8 +653,14 @@ end
 
 function clearSkills()
   self.irden.bonusGroups = root.assetJson("/irden_bonuses.config")
-  self.irden.attacks = nil
   setHealthAndArmor()
+  loadBonuses()
+  loadAttacks()
+end
+
+function clearAttacks()
+  self.irden.attacks = nil
+  self.irden.bonusGroups["Особые атаки"] = nil
   loadBonuses()
   loadAttacks()
 end
