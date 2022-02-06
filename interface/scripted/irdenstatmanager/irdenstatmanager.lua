@@ -15,7 +15,7 @@ function init()
   self.characterStatsTextboxes = config.getParameter("characterStatsTextboxes")
   self.characterStats = config.getParameter("characterStats")
   self.tabs = config.getParameter("tabs")
-  self.attackTypes = {"Melee", "Ranged", "Magic", "Custom", "AddNew"}
+  self.attackTypes = {"Melee", "Ranged", "Magic", "AddNew"}
   self.selectedLine = nil
 
   if config.getParameter("defensePlayer") then 
@@ -112,24 +112,40 @@ end
 
 
 function loadAttacks()
-  widget.removeAllChildren("lytAttacks.lytCustomAttack.lytAttacks")
-  if self.irden.attacks then
-    local position = {30, 180}
-    for _, attack in ipairs(self.irden.attacks) do
-      position[2] = position[2] - 20
+  for _, layout in ipairs(self.attackTypes) do
+    widget.removeAllChildren("lytAttacks.lyt" .. layout .. "Attack.lytCustomAttack")
+  end
 
-      widget.addChild("lytAttacks.lytCustomAttack.lytAttacks", {
+  if self.irden.attacks then
+    local attackTypeMap = {
+      melee = {
+        layout = "Melee",
+        position = {30, 100}
+      },
+      ranged = {
+        layout = "Ranged",
+        position = {30, 100}
+      },
+      magic = {
+        layout = "Magic",
+        position = {30, 160}
+      }
+    }
+    for _, attack in ipairs(self.irden.attacks) do
+      attackTypeMap[attack.type].position[2] = attackTypeMap[attack.type].position[2] - 20
+
+      widget.addChild("lytAttacks.lyt" .. attackTypeMap[attack.type].layout .. "Attack.lytCustomAttack", {
         type = "button",
-        position = position,
+        position = attackTypeMap[attack.type].position,
         caption = attack.desc,
-        base = "/interface/button.png",
-        hover = "/interface/buttonhover.png",
+        base = "/interface/buttonactive.png",
+        hover = "/interface/buttonactivehover.png",
         callback = "attack",
         data = attack
       })
       
-      if position[2] <= 80 then
-        position = {position[1] + 60, 180}
+      if attackTypeMap[attack.type].position[2] <= 80 then
+        attackTypeMap[attack.type].position = {attackTypeMap[attack.type].position[1] + 60, 180}
       end
     end
   end
@@ -437,6 +453,11 @@ function changeTab(id, data)
 	widget.setVisible(data, true)
 end
 
+function showAddAttackLayout(_, data)
+  changeAttackType(_, "lytAddNewAttack")
+  widget.setSelectedOption("lytAttacks.lytAddNewAttack.rgAttackType", data)
+end
+
 function changeAttackType(id, data)
   for _, attackType in ipairs(self.attackTypes) do
 		widget.setVisible("lytAttacks.lyt" .. attackType .. "Attack", false)
@@ -655,8 +676,8 @@ function getBonusByTag(tag)
 end
 
 
-function clearSkills()
-  self.irden.bonusGroups = root.assetJson("/irden_bonuses.config")
+function clearBonuses()
+  self.irden.bonusGroups = sb.jsonMerge(self.irden.bonusGroups, root.assetJson("/irden_bonuses.config")) 
   setHealthAndArmor()
   loadBonuses()
   loadAttacks()
@@ -820,9 +841,9 @@ function addAttack()
 
     loadBonuses()
     loadAttacks()
-    changeAttackType(_, "lytCustomAttack")
 
     widget.setText("lytAttacks.lytAddNewAttack.tbxAttackName", "")
+    changeAttackType(_, widget.getSelectedData("lytAttacks.rgAttackTypes"))
   end
 end
 
