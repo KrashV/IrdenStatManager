@@ -408,7 +408,7 @@ function changeHp()
   end
   
   local third = maxHp / 3
-  local partImage = self.irden.currentHp >= maxHp and "" or (self.irden.currentHp < third and "3" or (self.irden.currentHp > 2 * third and "1" or "2"))
+  local partImage = self.irden.currentHp >= maxHp and "" or (self.irden.currentHp == 0 and "0" or (self.irden.currentHp < third and "3" or (self.irden.currentHp > 2 * third and "1" or "2")))
 
   widget.setImage("lytCharacter.imgStatHp", string.format("/interface/scripted/irdenstatmanager/staticons/icon_con%s.png", partImage))
 end
