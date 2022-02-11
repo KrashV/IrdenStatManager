@@ -6,7 +6,7 @@ local oldUpdate = update;
 
 function init()
   oldInit()
-  self.movement = 10
+  self.movement = 15
   self.showMovement = false
   self.lineColor = "#3ffe13"
   self.numberColor = "white"

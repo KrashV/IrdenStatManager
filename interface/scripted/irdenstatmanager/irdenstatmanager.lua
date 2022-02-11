@@ -111,6 +111,11 @@ function loadWeapons(gear)
   widget.setSelectedOption("lytArmory.lytDefense.rgShields", gear["armour"]["shield"])
   widget.setSelectedOption("lytArmory.lytDefense.rgAmulets", gear["armour"]["amulet"])
   widget.setChecked("lytArmory.lytWeapons.cbxIsAutomatic", not not self.irden["gear"].isAutomatic)
+
+  local movementBonus = widget.getSelectedData("lytArmory.lytDefense.rgArmour").movementBonus
+  if (movementBonus) then
+    world.sendEntityMessage(player.id(), "irdenGetArmourMovement", getBonusByTag(movementBonus).value)
+  end
 end
 
 
