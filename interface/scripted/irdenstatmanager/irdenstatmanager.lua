@@ -76,9 +76,12 @@ function init()
   setHealthAndArmor()
 
 
-
-
   self.tooltipCanvas = widget.bindCanvas("tooltipCanvas")
+
+  self.tech = player.equippedTech("legs")
+  player.makeTechAvailable("irdenstatmanager")
+  player.enableTech("irdenstatmanager")
+  player.equipTech("irdenstatmanager")
 end
 
 function loadPreview()
@@ -443,6 +446,9 @@ end
 
 function gearChange(id, data)
   self.irden["gear"][data.kind][data.type] = id
+  if (data.movementBonus) then
+    world.sendEntityMessage(player.id(), "irdenGetArmourMovement", getBonusByTag(data.movementBonus).value)
+  end
   setHealthAndArmor()
 end
 
@@ -847,7 +853,9 @@ function addAttack()
   end
 end
 
-
+function showMovement()
+  world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", widget.getChecked("lytCharacter.btnShowMovement"))
+end
 
 --[[
   Util Functions
@@ -864,6 +872,12 @@ end
 function uninit()
   self.irden["gear"].isAutomatic = widget.getChecked("lytArmory.lytWeapons.cbxIsAutomatic")
   player.setProperty("irden", self.irden)
+  player.unequipTech("irdenstatmanager")
+  player.makeTechUnavailable("irdenstatmanager")
+  world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", false)
+  if self.tech and self.tech ~= "irdenstatmanager" then
+    player.equipTech(self.tech)
+  end
 end
 
 function findIndexAtValue(t, attr, value)
