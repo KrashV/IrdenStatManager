@@ -77,11 +77,6 @@ function init()
 
 
   self.tooltipCanvas = widget.bindCanvas("tooltipCanvas")
-
-  self.tech = player.equippedTech("legs")
-  player.makeTechAvailable("irdenstatmanager")
-  player.enableTech("irdenstatmanager")
-  player.equipTech("irdenstatmanager")
 end
 
 function loadPreview()
@@ -859,7 +854,15 @@ function addAttack()
 end
 
 function showMovement()
-  world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", widget.getChecked("lytCharacter.btnShowMovement"))
+  local toShow = widget.getChecked("lytCharacter.btnShowMovement")
+  world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", toShow)
+
+  if toShow then
+    self.tech = player.equippedTech("legs")
+    player.makeTechAvailable("irdenstatmanager")
+    player.enableTech("irdenstatmanager")
+    player.equipTech("irdenstatmanager")
+  end
 end
 
 --[[
@@ -877,11 +880,14 @@ end
 function uninit()
   self.irden["gear"].isAutomatic = widget.getChecked("lytArmory.lytWeapons.cbxIsAutomatic")
   player.setProperty("irden", self.irden)
-  player.unequipTech("irdenstatmanager")
-  player.makeTechUnavailable("irdenstatmanager")
-  world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", false)
-  if self.tech and self.tech ~= "irdenstatmanager" then
-    player.equipTech(self.tech)
+
+  if player.equippedTech("legs") and player.equippedTech("legs") == "irdenstatmanager" then
+    player.unequipTech("irdenstatmanager")
+    player.makeTechUnavailable("irdenstatmanager")
+    world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", false)
+    if self.tech and self.tech ~= "irdenstatmanager" then
+      player.equipTech(self.tech)
+    end
   end
 end
 
