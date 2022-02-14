@@ -1,4 +1,5 @@
 require "/scripts/util.lua"
+require "/scripts/vec2.lua"
 require "/interface/scripted/animatedWidgets.lua"
 
 function init()
@@ -134,8 +135,11 @@ function loadAttacks()
         position = {30, 160}
       }
     }
+
     for _, attack in ipairs(self.irden.attacks) do
       attackTypeMap[attack.type].position[2] = attackTypeMap[attack.type].position[2] - 20
+
+      local childName = attack.desc .. math.random(1031)
 
       widget.addChild("lytAttacks.lyt" .. attackTypeMap[attack.type].layout .. "Attack.lytCustomAttack", {
         type = "button",
@@ -145,13 +149,63 @@ function loadAttacks()
         hover = "/interface/buttonactivehover.png",
         callback = "attack",
         data = attack
-      })
+      }, childName)
+
+      attack.buttonName = childName
+      widget.addChild("lytAttacks.lyt" .. attackTypeMap[attack.type].layout .. "Attack.lytCustomAttack", {
+        type = "button",
+        position = vec2.add(attackTypeMap[attack.type].position, {-15, 0}),
+        caption = "-",
+        base = "/interface/scripted/irdenstatmanager/buttondelete.png",
+        hover = "/interface/scripted/irdenstatmanager/buttondeletehover.png",
+        callback = "deleteAttack",
+        data = attack
+      }, childName .. "btn")
       
       if attackTypeMap[attack.type].position[2] <= 80 then
-        attackTypeMap[attack.type].position = {attackTypeMap[attack.type].position[1] + 60, 180}
+        attackTypeMap[attack.type].position = {attackTypeMap[attack.type].position[1] + 80, 180}
       end
     end
   end
+end
+
+function deleteAttack(_, data)
+  local attackTypeMap = {
+    melee = {
+      layout = "Melee"
+    },
+    ranged = {
+      layout = "Ranged"
+    },
+    magic = {
+      layout = "Magic"
+    }
+  }
+
+  local attackIndex = findIndexAtValue(self.irden.bonusGroups["Особые атаки"].bonuses, "tag", data.attackBonus)
+  if attackIndex then
+    table.remove(self.irden.bonusGroups["Особые атаки"].bonuses, attackIndex)
+  end
+
+  local damageIndex = findIndexAtValue(self.irden.bonusGroups["Особые атаки"].bonuses, "tag", data.damageBonus)
+  if damageIndex then
+    table.remove(self.irden.bonusGroups["Особые атаки"].bonuses, damageIndex)
+  end
+
+  local aIndx = findIndexAtValue(self.irden.attacks, "desc", data.desc)
+  if aIndx then
+    table.remove(self.irden.attacks, aIndx)
+  end
+
+  if #self.irden.attacks == 0 then
+    self.irden.bonusGroups["Особые атаки"] = nil
+  end
+
+
+  loadBonuses()
+
+  widget.removeChild("lytAttacks.lyt" .. attackTypeMap[data.type].layout .. "Attack.lytCustomAttack", data.buttonName)
+  widget.removeChild("lytAttacks.lyt" .. attackTypeMap[data.type].layout .. "Attack.lytCustomAttack", data.buttonName .. "btn")
 end
 
 
@@ -165,7 +219,6 @@ function loadBonuses()
 
   for _, groupName in ipairs(sourtedGroups) do
     local group = self.irden.bonusGroups[groupName]
-
 
     local bonusType = group.isCustom and "lytCustomBonuses" or (group.type == "stuff" and "lytStuffBonuses" or group.type == "actions" and "lytActionsBonuses" or "lytBaseBonuses")
     local data = {
@@ -360,7 +413,7 @@ function addBonus()
     bonus.value = tonumber(widget.getText("lytMisc.lytAddNewSkill.tbxNewSkillValue"))
     bonus.oneTimed = not widget.getChecked("lytMisc.lytAddNewSkill.cbxIsPermanent")
     bonus.ready = true
-    bonus.tag = widget.getSelectedData("lytMisc.lytAddNewSkill.rgBonusTags")
+    bonus.tag = widget.getSelectedData("lytMisc.lytAddNewSkill.rgBonusTags").tag
 
     table.insert(self.irden.bonusGroups[self.currentGroup].bonuses, bonus)
     widget.setText("lytMisc.lytAddNewSkill.tbxNewSkillName", "")
@@ -413,7 +466,7 @@ function changeHp()
   local third = maxHp / 3
   local partImage = self.irden.currentHp >= maxHp and "" or (self.irden.currentHp == 0 and "0" or (self.irden.currentHp < third and "3" or (self.irden.currentHp > 2 * third and "1" or "2")))
 
-  widget.setImage("lytCharacter.imgStatHp", string.format("/interface/scripted/irdenstatmanager/staticons/icon_con%s.png", partImage))
+  widget.setImage("lytCharacter.imgStatHp", string.format("/interface/scripted/irdenstatmanager/staticons/end%s.png", partImage))
 end
 
 function roll20(_, dice)
@@ -689,13 +742,6 @@ function clearBonuses()
   loadAttacks()
 end
 
-function clearAttacks()
-  self.irden.attacks = nil
-  self.irden.bonusGroups["Особые атаки"] = nil
-  loadBonuses()
-  loadAttacks()
-end
-
 function setHealthAndArmor()
   widget.setText("lytCharacter.tbxCurrentHp", self.irden.currentHp)
   widget.setText("lytCharacter.lblMaxHP", string.format("HP:       / %s", 20 + addBonusToStat(self.irden["stats"]["endurance"], "END")))
@@ -789,7 +835,7 @@ function resources(_, data)
     rgseed = util.seedTime(),
     action = data.action,
     source = world.entityName(player.id()),
-    bonuses = getBonuses({"ALL", data.tag}, self.irden.stats[data.stat], data.tag),
+    bonuses = getBonuses({"ALL", table.unpack(data.tags)}, self.irden.stats[self.characterStats[data.stat]], data.stat),
     data = data
   })
 end
