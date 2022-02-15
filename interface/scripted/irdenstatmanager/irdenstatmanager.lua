@@ -911,6 +911,12 @@ function showMovement()
   end
 end
 
+
+function changeNewBonus(_, data)
+  widget.setText("lytMisc.lytAddNewSkill.lblBonusType", data.tooltip.name)
+end
+
+
 --[[
   Util Functions
 ]]
