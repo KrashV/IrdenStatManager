@@ -580,6 +580,11 @@ function attack(btnName, data)
     shieldDamageBonus = 0
   end
   
+  local damageBonuses = nil
+  if not data.noDamage then
+    damageBonuses = getBonuses({"DAMAGE"}, baseDamageBonus, "База", weaponDamageBonus, "Оружие", damageBonus, "Атака", shieldDamageBonus, "Щит")
+  end
+
   self.attackDataToSend = {
     type = "actionroll", 
     dice = 20,
@@ -588,8 +593,9 @@ function attack(btnName, data)
     action = data.desc,
     attackType = data.type,
     bonuses = getBonuses({"ATTACK", table.unpack(data.tags)}, baseAttackBonus, data.stat, weaponAttackBonus, "Оружие", attackBonus, "Атака"),
-    damageBonuses = getBonuses({"DAMAGE"}, baseDamageBonus, "База", weaponDamageBonus, "Оружие", damageBonus, "Атака", shieldDamageBonus, "Щит")
+    damageBonuses = damageBonuses
   }
+
   --dirty hack after dropping bonuses
   if btnName == "btnRangedPiercing" then
     local rangedPiercingDebuff = findIndexAtValue(self.irden.bonusGroups["Общие"].bonuses, "name", "Бывший пробивной выстрел")
@@ -855,6 +861,7 @@ function addAttack()
     local dmgStat = widget.getSelectedData("lytAttacks.lytAddNewAttack.rgDamageTags")
     local type = widget.getSelectedData("lytAttacks.lytAddNewAttack.rgAttackType")
     local newBonusTag = "CUST_ATTACK_" .. attackName .. "_" .. math.random(1000)
+    local noDamage = widget.getChecked("lytAttacks.lytAddNewAttack.btnShouldHaveNoDamage")
     
     if not self.irden.bonusGroups["Особые атаки"] then
       self.irden.bonusGroups["Особые атаки"] = {
@@ -874,20 +881,29 @@ function addAttack()
       dmgDivider = tonumber(widget.getText("lytAttacks.lytAddNewAttack.tbxDamageDivider")) or 1,
       attackBonus = newBonusTag .. "_ATTACK",
       damageBonus = newBonusTag .. "_DAMAGE",
-      tags = {"ALL", stat}
+      tags = {"ALL", stat},
+      noDamage = noDamage
     })
 
 
-    table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
-      name = attackName .. ": попадание",
-      value = 0,
-      tag = newBonusTag .. "_ATTACK"
-    })
-    table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
-      name = attackName .. ": урон",
-      value = 0,
-      tag = newBonusTag .. "_DAMAGE"
-    })
+    if not noDamage then
+      table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
+        name = attackName .. ": попадание",
+        value = 0,
+        tag = newBonusTag .. "_ATTACK"
+      })
+      table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
+        name = attackName .. ": урон",
+        value = 0,
+        tag = newBonusTag .. "_DAMAGE"
+      })
+    else
+      table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
+        name = attackName,
+        value = 0,
+        tag = newBonusTag .. "_ATTACK"
+      })
+    end
 
 
     loadBonuses()
