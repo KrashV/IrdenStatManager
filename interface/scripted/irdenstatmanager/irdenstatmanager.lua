@@ -25,7 +25,6 @@ function init()
     pane.setTitle("Irden Stat Manager", string.format("Вас атакует ^magenta;%s, ^reset;используя ^orange;%s", world.entityName(self.defensePlayer), config.getParameter("attackDesc")))
     widget.setSelectedOption("rgTabs", 0)
   end
-  
 
   -- FIX THE GROUPS
   if self.irden and not self.irden.bonusGroups and self.irden.bonuses then

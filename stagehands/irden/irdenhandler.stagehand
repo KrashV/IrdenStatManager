@@ -1,0 +1,9 @@
+{
+  "type" : "irdenhandler",
+
+  "scripts" : [
+  	"/stagehands/irden/irdenhandler.lua"
+  ],
+  "scriptDelta" : 1,
+  "name": ""
+}
