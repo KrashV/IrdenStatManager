@@ -29,6 +29,8 @@ function init()
   message.setHandler("destroy", function() stagehand.die() end)
 end
 
+
+
 function addPlayerToFight(playerId, initiative)
 
   local playerUUID = world.entityUniqueId(playerId)
@@ -49,6 +51,8 @@ function addPlayerToFight(playerId, initiative)
     end
   end
 end
+
+
 
 function nextPlayer(playerId, toLeave, isAdmin)
   local playerUUID = world.entityUniqueId(playerId)
@@ -86,7 +90,8 @@ end
 
 function update()
   promises:update()
-  if #self.fight.players == 0 and self.fight.started then
+  if next(self.fight.players) == nil and self.fight.started then
+    clearFight()
     stagehand.die()
   end
 end
@@ -106,7 +111,11 @@ function sortedKeys(query)
 end
 
 function uninit()
+  clearFight()
+end
+
+function clearFight()
   local fights = world.getProperty("currentFights_v2") or {}
-  fights[self.fight.name] = self.fight
+  fights[self.fight.name] = nil
   world.setProperty("currentFights_v2", fights)
 end

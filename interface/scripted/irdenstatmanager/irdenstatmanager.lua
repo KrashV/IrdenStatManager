@@ -161,7 +161,7 @@ function loadAttacks()
         data = attack
       }, childName .. "btn")
       
-      if attackTypeMap[attack.type].position[2] <= 80 then
+      if attackTypeMap[attack.type].position[2] <= 60 then
         attackTypeMap[attack.type].position = {attackTypeMap[attack.type].position[1] + 80, 180}
       end
     end
