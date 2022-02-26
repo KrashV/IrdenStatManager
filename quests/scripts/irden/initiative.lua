@@ -53,7 +53,7 @@ function populateList()
       local currentPlayerName = "Неизвестно"
       if currentFight.currentPlayer and currentFight.players[currentFight.currentPlayer] then currentPlayerName = currentFight.players[currentFight.currentPlayer].name end
 
-      local objectiveList = not next(currentFight.players) and {{"Тут никого!", false}} or {
+      local objectiveList = not next(currentFight.players) and {{"Перезайдите в бой!", false}} or {
         {"^yellow;" .. currentFight.round .. "^reset;: Ход игрока ^orange;".. currentPlayerName .. "^reset;", false}
       }
 

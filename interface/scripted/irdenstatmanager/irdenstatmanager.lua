@@ -19,6 +19,8 @@ function init()
   self.attackTypes = {"Melee", "Ranged", "Magic", "AddNew"}
   self.selectedLine = nil
 
+  self.movementType = 1
+
   if config.getParameter("defensePlayer") then 
     self.defensePlayer = config.getParameter("defensePlayer")
     widget.setSelectedOption("lytAttacks.rgAttackTypes", config.getParameter("attackType"))
@@ -89,6 +91,16 @@ function loadPreview()
 		local li = widget.addListItem("lytCharacter.lstPreview")
 		widget.setImage("lytCharacter.lstPreview." .. li .. ".image", part.image)
 	end
+end
+
+function setResourseAttempts()
+  local perfectAttempts = 1 + (addBonusToStat(self.irden["stats"]["endurance"], "END") + 1) // 2
+  widget.setText("lytCharacter.lblHunting", 2 + getBonusByTag("RESOURSE_HUNTING").value)
+  widget.setText("lytCharacter.lblMining", perfectAttempts // 2 + getBonusByTag("RESOURSE_MINING").value)
+  widget.setText("lytCharacter.lblQuarry", perfectAttempts + getBonusByTag("RESOURSE_QUARRY").value)
+  widget.setText("lytCharacter.lblChopping", perfectAttempts // 2 + getBonusByTag("RESOURSE_CHOPPING").value)
+  widget.setText("lytCharacter.lblRiches", addBonusToStat(self.irden["stats"]["perception"], "PER") // 5 + getBonusByTag("RESOURSE_RICHES").value)
+  widget.setText("lytCharacter.lblWooddoing", perfectAttempts + getBonusByTag("RESOURSE_WOODDOING").value)
 end
 
 function loadStats(stats)
@@ -469,7 +481,7 @@ function changeHp()
 end
 
 function roll20(_, dice)
-  world.setProperty("statmanager", {
+  sendMessageToServer("statmanager", {
     type = "diceroll", 
     dice = tonumber(widget.getText("lytCharacter.tbxStatRollany")) or 0,
     rgseed = util.seedTime(),
@@ -479,7 +491,7 @@ end
 
 function rollStat(_, data)
   local description = widget.getText("lytCharacter.tbxSkillName")
-  world.setProperty("statmanager", {
+  sendMessageToServer("statmanager", {
     type = "statroll", 
     dice = 20,
     rgseed = util.seedTime(),
@@ -629,7 +641,7 @@ function populatePlayers()
   table.sort(players, function(a, b) return a.name < b.name end)
 
   local li = widget.addListItem("lytWhoAttack.saPlayers.listPlayers")
-  widget.setText("lytWhoAttack.saPlayers.listPlayers." .. li .. ".playerName", "В воздух")
+  widget.setText("lytWhoAttack.saPlayers.listPlayers." .. li .. ".playerName", "Никто")
   
   for _, p in ipairs(players) do
     local li = widget.addListItem("lytWhoAttack.saPlayers.listPlayers")
@@ -655,7 +667,7 @@ function playerSelected(listName)
     local id = widget.getData("lytWhoAttack.saPlayers.listPlayers." .. li)
     
     self.attackDataToSend.target = id and world.entityName(id) or nil
-    world.setProperty("statmanager", self.attackDataToSend)
+    sendMessageToServer("statmanager", self.attackDataToSend)
   
     if id then
       local msg = root.assetJson("/interface/scripted/irdenstatmanager/irdenstatmanager.config")
@@ -681,7 +693,7 @@ function defense(btnName, data)
     table.insert(defenseParts, "Щит")
   end  
   
-  world.setProperty("statmanager", {
+  sendMessageToServer("statmanager", {
     type = "actionroll", 
     dice = 20,
     rgseed = util.seedTime(),
@@ -756,6 +768,7 @@ function setHealthAndArmor()
   widget.setText("lytCharacter.lblArmour", string.format("Броня: %s / %s", physArmour, magArm))
   adjustArmourPG(physArmour, magArm)
   changeHp()
+  setResourseAttempts()
 end
 
 function adjustArmourPG(p, m)
@@ -784,19 +797,15 @@ end
 
 function enterFight()
   if self.irden.fightName and self.irden.fightName ~= "" then
-    local fights = world.getProperty("currentFight") or {}
-    local currentFight = fights[self.irden.fightName] or {
-      players = {},
-      started = false,
-      currentPlayer = nil,
-      done = false
-    }
+    promises:add(world.findUniqueEntity("irdenfighthandler_" .. self.irden.fightName), function(pos)
+      -- we are already in a fight
+      player.setProperty("irdenfightName", self.irden.fightName)
+      player.startQuest("irdeninitiative")
+    end, function(error)
+      local initiative = math.random(20)
+      local bonuses = getBonuses({"INITIATIVE"})
 
-    local initiative = math.random(20)
-    local bonuses = getBonuses({"INITIATIVE"})
-
-    if not currentFight.players[player.uniqueId()] then
-      world.setProperty("statmanager", {
+      sendMessageToServer("statmanager", {
         type = "initiative", 
         dice = 20,
         rgseed = util.seedTime(),
@@ -805,11 +814,10 @@ function enterFight()
         fightName = self.irden.fightName,
         bonuses = bonuses
       })
-    end
-    
-    player.setProperty("irdeninitiative", calculateBonuses(initiative, bonuses))
-    player.setProperty("irdenfightName", self.irden.fightName)
-    player.startQuest("irdeninitiative")
+      player.setProperty("irdeninitiative", calculateBonuses(initiative, bonuses))
+      player.setProperty("irdenfightName", self.irden.fightName)
+      player.startQuest("irdeninitiative")
+    end)
   end
 end
 
@@ -835,7 +843,7 @@ end
 function resources(_, data)
   local type = data.type
 
-  world.setProperty("statmanager", {
+  sendMessageToServer("statmanager", {
     type = "resourceEvent", 
     rgseed = util.seedTime(),
     action = data.action,
@@ -915,10 +923,14 @@ function addAttack()
 end
 
 function showMovement()
-  local toShow = widget.getChecked("lytCharacter.btnShowMovement")
-  world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", toShow)
+  self.movementType = (self.movementType % 3) + 1
+  world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", self.movementType)
+  widget.setButtonImages("lytCharacter.btnShowMovement", {
+    base = string.format("/interface/scripted/irdenstatmanager/staticons/movement%s.png", self.movementType),
+    hover = string.format("/interface/scripted/irdenstatmanager/staticons/movement%s.png?brightness=-20", self.movementType)
+  })
 
-  if toShow then
+  if self.movementType > 2 then
     self.tech = player.equippedTech("legs")
     player.makeTechAvailable("irdenstatmanager")
     player.enableTech("irdenstatmanager")
@@ -951,7 +963,7 @@ function uninit()
   if player.equippedTech("legs") and player.equippedTech("legs") == "irdenstatmanager" then
     player.unequipTech("irdenstatmanager")
     player.makeTechUnavailable("irdenstatmanager")
-    world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", false)
+    world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", 0)
     if self.tech and self.tech ~= "irdenstatmanager" then
       player.equipTech(self.tech)
     end
@@ -994,9 +1006,17 @@ function printTime()
 
 end
 
+
+function sendMessageToServer(message, data)
+  data.silent = widget.getChecked("lytCharacter.btnOutloud")
+  world.sendEntityMessage(0, message, data)
+end
+
+
 function update()
 	printTime()
   animatedWidgets:update()
+  promises:update()
 end
 
 
