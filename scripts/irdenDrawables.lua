@@ -44,6 +44,7 @@ function update(...)
 
   localAnimator.clearDrawables()
   if self.showLevel > 1 then
+    -- Show players around
     local pId = player.id()
     local mPosition = world.entityPosition(pId)
     local mouthOffset = vec2.sub(mPosition, world.entityMouthPosition(pId))
@@ -54,13 +55,14 @@ function update(...)
 
       localAnimator.addDrawable({
         image = string.format("/interface/scripted/irdenstatmanager/numbers/%s.png", math.min(blockDifference, 9)),
-        position = vec2.add({distance[1],  mouthOffset[2]}, {0, 3}),
+        position = vec2.add(distance, {0, 2}),
         color = self.numberColor,
         fullbright = true
       }, "overlay")
     end
 
     if self.showLevel > 2 then
+      -- Show ruler
       promises:add(world.sendEntityMessage(pId, "irdenStatManagerGetAimPosition"), function(currentAimPosition)
         local difference = {0, 0}
 

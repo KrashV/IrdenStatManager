@@ -110,16 +110,16 @@ function loadStats(stats)
 end
 
 function loadWeapons(gear)
-  widget.setSelectedOption("lytArmory.lytWeapons.rgMeleeWeapons", gear["weapon"]["melee"])
-  widget.setSelectedOption("lytArmory.lytWeapons.rgRangedWeapons", gear["weapon"]["ranged"])
-  widget.setSelectedOption("lytArmory.lytWeapons.rgMagicWeapons", gear["weapon"]["magic"])
+  widget.setSelectedOption("lytArmory.rgmeleeWeapons", gear["weapon"]["melee"])
+  widget.setSelectedOption("lytArmory.rgrangedWeapons", gear["weapon"]["ranged"])
+  widget.setSelectedOption("lytArmory.rgmagicWeapons", gear["weapon"]["magic"])
 
-  widget.setSelectedOption("lytArmory.lytDefense.rgArmour", gear["armour"]["armour"])
-  widget.setSelectedOption("lytArmory.lytDefense.rgShields", gear["armour"]["shield"])
-  widget.setSelectedOption("lytArmory.lytDefense.rgAmulets", gear["armour"]["amulet"])
-  widget.setChecked("lytArmory.lytWeapons.cbxIsAutomatic", not not self.irden["gear"].isAutomatic)
+  widget.setSelectedOption("lytArmory.rgArmour", gear["armour"]["armour"])
+  widget.setSelectedOption("lytArmory.rgShields", gear["armour"]["shield"])
+  widget.setSelectedOption("lytArmory.rgAmulets", gear["armour"]["amulet"])
+  widget.setChecked("lytArmory.cbxIsAutomatic", not not self.irden["gear"].isAutomatic)
 
-  local movementBonus = widget.getSelectedData("lytArmory.lytDefense.rgArmour").movementBonus
+  local movementBonus = widget.getSelectedData("lytArmory.rgArmour").movementBonus
   if (movementBonus) then
     world.sendEntityMessage(player.id(), "irdenGetArmourMovement", getBonusByTag(movementBonus).value)
   end
@@ -149,6 +149,13 @@ function loadAttacks()
 
     for _, attack in ipairs(self.irden.attacks) do
       attackTypeMap[attack.type].position[2] = attackTypeMap[attack.type].position[2] - 20
+
+      -- add metainfo to attack
+      attack.activeBonuses = {
+        tags = {"ALL", attack.stat, attack.dmgStat, attack.damageBonus, attack.attackBonus}
+      }
+
+
 
       local childName = attack.desc .. math.random(1031)
 
@@ -277,7 +284,7 @@ function loadBonuses()
         local li = widget.addListItem("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses")
         widget.setText("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", bonus.name)
         widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", bonus.name)
-        widget.setText("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusValue", bonus.value)
+        widget.setText("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusValue", string.format('%s%d', bonus.value > 0 and "+" or "", bonus.value))
         widget.setPosition("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", {35, 5})
         widget.setPosition("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", {13, 5})
         widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", {
@@ -378,9 +385,9 @@ function changeBonus.up(_, data)
     local selectedTab = widget.getSelectedData("lytMisc.lytBonuses.rgBonusTypes")
     local index = findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "name", data.bonus)
     if index then
-      local value = self.irden.bonusGroups[data.group].bonuses[index].value
-      self.irden.bonusGroups[data.group].bonuses[index].value = value + 1
-      widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value + 1)
+      local value = self.irden.bonusGroups[data.group].bonuses[index].value + 1
+      self.irden.bonusGroups[data.group].bonuses[index].value = value
+      widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", string.format('%s%d', value > 0 and "+" or "", value))
       setHealthAndArmor()
     end
   end
@@ -391,9 +398,9 @@ function changeBonus.down(_, data)
     local selectedTab = widget.getSelectedData("lytMisc.lytBonuses.rgBonusTypes")
     local index = findIndexAtValue(self.irden.bonusGroups[data.group].bonuses, "name", data.bonus)
     if index then
-      local value = self.irden.bonusGroups[data.group].bonuses[index].value
-      self.irden.bonusGroups[data.group].bonuses[index].value = value - 1
-      widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", value - 1)
+      local value = self.irden.bonusGroups[data.group].bonuses[index].value - 1
+      self.irden.bonusGroups[data.group].bonuses[index].value = value
+      widget.setText("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses.listBonuses." .. self.selectedLine .. ".bonusValue", string.format('%s%d', value > 0 and "+" or "", value))
       setHealthAndArmor()
     end
   end
@@ -524,7 +531,7 @@ function changeTab(id, data)
 end
 
 function showAddAttackLayout(_, data)
-  changeAttackType(_, "lytAddNewAttack")
+  changeAttackType(_, {layout = "lytAddNewAttack"})
   widget.setSelectedOption("lytAttacks.lytAddNewAttack.rgAttackType", data)
 end
 
@@ -532,7 +539,7 @@ function changeAttackType(id, data)
   for _, attackType in ipairs(self.attackTypes) do
 		widget.setVisible("lytAttacks.lyt" .. attackType .. "Attack", false)
 	end
-	widget.setVisible("lytAttacks." .. data, true)
+	widget.setVisible("lytAttacks." .. data.layout, true)
 end
 
 function changeBonusType(id, data)
@@ -540,13 +547,6 @@ function changeBonusType(id, data)
 		widget.setVisible("lytMisc.lytBonuses." .. gearType, false)
 	end
 	widget.setVisible("lytMisc.lytBonuses." .. data, true)
-end
-
-function changeGearType(id, data)
-  for _, gearType in ipairs({"Weapons", "Defense"}) do
-		widget.setVisible("lytArmory.lyt" .. gearType, false)
-	end
-	widget.setVisible("lytArmory." .. data, true)
 end
 
 function lineSelected(listName)
@@ -560,36 +560,18 @@ function attack(btnName, data)
 
   -- Calculate the attack bonus
   local baseAttackBonus = self.irden.stats[self.characterStats[data.stat]] or 0
-  local weaponAttackBonus = 0
+  local weaponAttackBonus = getBonusByTag(widget.getData("lytArmory.rg" .. data.type .. "Weapons." .. self.irden["gear"]["weapon"][data.type]).attackBonus).value
   local armourAttackBonus = 0
   local attackBonus = getBonusByTag(data.attackBonus).value
   local damageBonus = getBonusByTag(data.damageBonus).value
 
   local baseDamageBonus = math.max((addBonusToStat(baseAttackBonus, data.stat) + addBonusToStat(self.irden.stats[self.characterStats[data.dmgStat]] or 0, data.dmgStat)) // data.dmgDivider, 1)
-  local weaponDamageBonus = 0
-  local shieldDamageBonus = 0
+  local weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.rg" .. data.type .. "Weapons." .. self.irden["gear"]["weapon"][data.type]).damageBonus).value
+  local shieldDamageBonus = getBonusByTag(widget.getData("lytArmory.rgShields." .. self.irden["gear"]["armour"]["shield"]).damageBonus).value
 
-  if data.type == "melee" then
-    weaponAttackBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgMeleeWeapons." .. self.irden["gear"]["weapon"]["melee"]).attackBonus).value
-
-    weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgMeleeWeapons." .. self.irden["gear"]["weapon"]["melee"]).damageBonus).value
-    shieldDamageBonus = getBonusByTag(widget.getData("lytArmory.lytDefense.rgShields." .. self.irden["gear"]["armour"]["shield"]).damageBonus).value
-  elseif data.type == "ranged" then
-    weaponAttackBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgRangedWeapons." .. self.irden["gear"]["weapon"]["ranged"]).attackBonus).value
-
-    weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgRangedWeapons." .. self.irden["gear"]["weapon"]["ranged"]).damageBonus).value
-    shieldDamageBonus = getBonusByTag(widget.getData("lytArmory.lytDefense.rgShields." .. self.irden["gear"]["armour"]["shield"]).damageBonus).value
-
-    if widget.getChecked("lytArmory.lytWeapons.cbxIsAutomatic") then
-      baseDamageBonus = 0
-      weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgRangedWeapons." .. self.irden["gear"]["weapon"]["ranged"]).autoDamage).value
-    end
-
-  elseif data.type == "magic" then
-    weaponAttackBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgMagicWeapons." .. self.irden["gear"]["weapon"]["magic"]).attackBonus).value
-
-    weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.lytWeapons.rgMagicWeapons." .. self.irden["gear"]["weapon"]["magic"]).damageBonus).value
-    shieldDamageBonus = 0
+  if data.type == "ranged" and widget.getChecked("lytArmory.cbxIsAutomatic") then
+    baseDamageBonus = 0
+    weaponDamageBonus = getBonusByTag(widget.getData("lytArmory.rgrangedWeapons." .. self.irden["gear"]["weapon"]["ranged"]).autoDamage).value
   end
   
   local damageBonuses = nil
@@ -686,10 +668,10 @@ end
 function defense(btnName, data)
 
   local defenseParts = { self.irden.stats[data.defense_stat], data.stat_desc, 
-  getBonusByTag(widget.getSelectedData("lytArmory.lytDefense.rgArmour").defenseBonus).value, "Броня", getBonusByTag(widget.getSelectedData("lytArmory.lytDefense.rgAmulets").defenseBonus).value, "Амулет" }
+    getBonusByTag(widget.getSelectedData("lytArmory.rgArmour").defenseBonus).value, "Броня", getBonusByTag(widget.getSelectedData("lytArmory.rgAmulets").defenseBonus).value, "Амулет" }
 
   if has_value(data.tags, "PARRY") or has_value(data.tags, "BLOCK") then
-    table.insert(defenseParts, getBonusByTag(widget.getSelectedData("lytArmory.lytDefense.rgShields").defenseBonus).value)
+    table.insert(defenseParts, getBonusByTag(widget.getSelectedData("lytArmory.rgShields").defenseBonus).value)
     table.insert(defenseParts, "Щит")
   end  
   
@@ -699,7 +681,7 @@ function defense(btnName, data)
     rgseed = util.seedTime(),
     source = world.entityName(player.id()),
     target = self.defensePlayer and world.entityName(self.defensePlayer) or nil,
-    action = widget.getData("lytAttacks." .. widget.getSelectedData("lytAttacks.rgAttackTypes") .. "." .. btnName).desc,
+    action = widget.getData("lytAttacks." .. widget.getSelectedData("lytAttacks.rgAttackTypes").layout .. "." .. btnName).desc,
     bonuses = getBonuses({"DEFENSE", table.unpack(data.tags)}, table.unpack(defenseParts))
   })
 end
@@ -751,6 +733,22 @@ function getBonusByTag(tag)
   }
 end
 
+function getActiveBonusesByTags(tags)
+  local activeBonuses = {}
+  for groupName, group in pairs(self.irden.bonusGroups) do
+    local groupType = self.irden.bonusGroups[groupName].type
+    for _, bonus in ipairs(group.bonuses) do
+      for _, tag in ipairs(tags) do 
+        if bonus.tag == tag and (bonus.ready or groupType == "actions" or groupType == "stuff") and bonus.value ~= 0 then
+          table.insert(activeBonuses, bonus)
+        end
+      end
+    end
+  end
+
+  return activeBonuses
+end
+
 
 function clearBonuses()
   self.irden.bonusGroups = sb.jsonMerge(self.irden.bonusGroups, root.assetJson("/irden_bonuses.config")) 
@@ -762,17 +760,13 @@ end
 function setHealthAndArmor()
   widget.setText("lytCharacter.tbxCurrentHp", self.irden.currentHp)
   widget.setText("lytCharacter.lblMaxHP", string.format("HP:       / %s", 20 + addBonusToStat(self.irden["stats"]["endurance"], "END")))
-  local physArmour = addBonusToStat(getBonusByTag(widget.getSelectedData("lytArmory.lytDefense.rgArmour").armourBonus).value, "ARM")
-  local magArm = addBonusToStat(getBonusByTag(widget.getSelectedData("lytArmory.lytDefense.rgAmulets").blockBonus).value, "MAGARM")
+  local physArmour = addBonusToStat(getBonusByTag(widget.getSelectedData("lytArmory.rgArmour").armourBonus).value, "ARM")
+  local magArm = addBonusToStat(getBonusByTag(widget.getSelectedData("lytArmory.rgAmulets").blockBonus).value, "MAGARM")
 
   widget.setText("lytCharacter.lblArmour", string.format("Броня: %s / %s", physArmour, magArm))
-  adjustArmourPG(physArmour, magArm)
+  widget.setProgress("lytCharacter.prgCurrentArmour", physArmour / (magArm + physArmour) )
   changeHp()
   setResourseAttempts()
-end
-
-function adjustArmourPG(p, m)
-  widget.setProgress("lytCharacter.prgCurrentArmour", p / (m + p) )
 end
 
 function addBonusToStat(base, stat)
@@ -796,26 +790,44 @@ function changeFightName()
 end
 
 function enterFight()
+  local function rollInitiative()
+    local initiative = math.random(20)
+    local bonuses = getBonuses({"INITIATIVE"})
+
+    sendMessageToServer("statmanager", {
+      type = "initiative", 
+      dice = 20,
+      rgseed = util.seedTime(),
+      initiative = initiative,
+      source = world.entityName(player.id()),
+      fightName = self.irden.fightName,
+      bonuses = bonuses
+    })
+    player.setProperty("irdeninitiative", calculateBonuses(initiative, bonuses))
+  end
+
+
+
   if self.irden.fightName and self.irden.fightName ~= "" then
     promises:add(world.findUniqueEntity("irdenfighthandler_" .. self.irden.fightName), function(pos)
       -- we are already in a fight
       player.setProperty("irdenfightName", self.irden.fightName)
-      player.startQuest("irdeninitiative")
-    end, function(error)
-      local initiative = math.random(20)
-      local bonuses = getBonuses({"INITIATIVE"})
 
-      sendMessageToServer("statmanager", {
-        type = "initiative", 
-        dice = 20,
-        rgseed = util.seedTime(),
-        initiative = initiative,
-        source = world.entityName(player.id()),
-        fightName = self.irden.fightName,
-        bonuses = bonuses
-      })
-      player.setProperty("irdeninitiative", calculateBonuses(initiative, bonuses))
-      player.setProperty("irdenfightName", self.irden.fightName)
+      promises:add(world.sendEntityMessage("irdenfighthandler_" .. self.irden.fightName, "getFight"), function(currentFight)
+        if not currentFight.players[player.uniqueId()] then
+          rollInitiative()
+        else
+          sendMessageToServer("statmanager", {
+            type = "return_to_fight",
+            fightName = self.irden.fightName,
+            initiative = currentFight.players[player.uniqueId()].initiative
+          })
+        end
+        
+        player.startQuest("irdeninitiative")
+      end)
+    end, function(error)
+      rollInitiative()
       player.startQuest("irdeninitiative")
     end)
   end
@@ -898,18 +910,21 @@ function addAttack()
       table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
         name = attackName .. ": попадание",
         value = 0,
-        tag = newBonusTag .. "_ATTACK"
+        tag = newBonusTag .. "_ATTACK",
+        ready = true
       })
       table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
         name = attackName .. ": урон",
         value = 0,
-        tag = newBonusTag .. "_DAMAGE"
+        tag = newBonusTag .. "_DAMAGE",
+        ready = true
       })
     else
       table.insert(self.irden.bonusGroups["Особые атаки"].bonuses, {
         name = attackName,
         value = 0,
-        tag = newBonusTag .. "_ATTACK"
+        tag = newBonusTag .. "_ATTACK",
+        ready = true
       })
     end
 
@@ -918,7 +933,7 @@ function addAttack()
     loadAttacks()
 
     widget.setText("lytAttacks.lytAddNewAttack.tbxAttackName", "")
-    changeAttackType(_, widget.getSelectedData("lytAttacks.rgAttackTypes"))
+    changeAttackType(_, {layout = widget.getSelectedData("lytAttacks.rgAttackTypes").layout})
   end
 end
 
@@ -954,20 +969,6 @@ function calculateBonuses(value, bonuses)
     sum = sum + bonuses[i]
   end
   return sum
-end
-
-function uninit()
-  self.irden["gear"].isAutomatic = widget.getChecked("lytArmory.lytWeapons.cbxIsAutomatic")
-  player.setProperty("irden", self.irden)
-
-  if player.equippedTech("legs") and player.equippedTech("legs") == "irdenstatmanager" then
-    player.unequipTech("irdenstatmanager")
-    player.makeTechUnavailable("irdenstatmanager")
-    world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", 0)
-    if self.tech and self.tech ~= "irdenstatmanager" then
-      player.equipTech(self.tech)
-    end
-  end
 end
 
 function findIndexAtValue(t, attr, value)
@@ -1024,27 +1025,92 @@ end
 function cursorOverride(screenPosition)
   if self.tooltipCanvas then
     self.tooltipCanvas:clear()
-
+    widget.clearListItems("lytActiveBonuses.listActiveBonuses")
     local w = widget.getChildAt(screenPosition)
+
     if w then
       w = w:sub(2)
       local wData = widget.getData(w) or {}
-      if type(wData) ~= "table" or not wData.tooltip then return end
 
-      local tooltip = wData.tooltip
-      local wPos = widget.getPosition(w)
+      if type(wData) == "table" then
 
-      self.tooltipCanvas:drawImage(tooltip.image, vec2.add(wPos, tooltip.imageOffset))
-      self.tooltipCanvas:drawText(tooltip.name, {
-        position = vec2.add(wPos, tooltip.labelOffset),
-        verticalAnchor = "mid",
-        horizontalAnchor = "mid"
-      }, tooltip.fontSize)
+        if wData.activeBonuses then 
+          drawActiveBonuses(wData.activeBonuses)
+        end
+
+        if wData.tooltip then
+          local tooltip = wData.tooltip
+          local wPos = widget.getPosition(w)
+  
+          self.tooltipCanvas:drawImage(tooltip.image, vec2.add(wPos, tooltip.imageOffset))
+          self.tooltipCanvas:drawText(tooltip.name, {
+            position = vec2.add(wPos, tooltip.labelOffset),
+            verticalAnchor = "mid",
+            horizontalAnchor = "mid"
+          }, tooltip.fontSize)
+        end 
+      end
+
     end
   end
 end
 
+function drawActiveBonuses(data)
+  local bonuses = getActiveBonusesByTags(data.tags)
+  
+  if has_value(data.tags, "ATTACK") then
+    local attackType = widget.getSelectedData("lytAttacks.rgAttackTypes").type
 
+    local weaponBonus = getBonusByTag(widget.getData("lytArmory.rg" .. attackType .. "Weapons." .. self.irden["gear"]["weapon"][attackType]).damageBonus).value
+  
+    if attackType == "ranged" and widget.getChecked("lytArmory.cbxIsAutomatic") then
+      weaponBonus = getBonusByTag(widget.getData("lytArmory.rgrangedWeapons." .. self.irden["gear"]["weapon"]["ranged"]).autoDamage).value
+    end
+
+    if weaponBonus ~= 0 then
+      table.insert(bonuses, {
+        name = "Урон оружия",
+        value = weaponBonus
+      })
+    end
+
+  elseif has_value(data.tags, "DEFENSE") then
+    local armourBonus = getBonusByTag(widget.getSelectedData("lytArmory.rgArmour").defenseBonus).value
+    local amuletBonus = getBonusByTag(widget.getSelectedData("lytArmory.rgAmulets").defenseBonus).value
+
+    if armourBonus ~= 0 then
+      table.insert(bonuses, {
+        name = "Броня",
+        value = armourBonus
+      })
+    end
+    if amuletBonus ~= 0 then
+      table.insert(bonuses, {
+        name = "Амулет",
+        value = amuletBonus
+      })
+    end
+
+    if has_value(data.tags, "PARRY") or has_value(data.tags, "BLOCK") then
+      local shieldBonus = getBonusByTag(widget.getSelectedData("lytArmory.rgShields").defenseBonus).value
+      if shieldBonus ~= 0 then
+        table.insert(bonuses, {
+          name = "Щит",
+          value = shieldBonus
+        })
+      end
+    end
+  end
+
+
+  for _, bonus in ipairs(bonuses) do 
+    local li = widget.addListItem("lytActiveBonuses.listActiveBonuses")
+    local bonusName = not not string.find(bonus.name, ": попадание") and "Попадание" or bonus.name
+    bonusName = not not string.find(bonusName, ": урон") and "Урон" or bonusName
+    widget.setText("lytActiveBonuses.listActiveBonuses." .. li .. ".bonusName", "* " .. bonusName)
+    widget.setText("lytActiveBonuses.listActiveBonuses." .. li .. ".bonusValue", string.format('%s%d', bonus.value > 0 and "+" or "", bonus.value))
+  end
+end
 
 function sortedKeys(query)
   local keys = {}
@@ -1054,4 +1120,20 @@ function sortedKeys(query)
   
   table.sort(keys)
   return keys
+end
+
+
+
+function uninit()
+  self.irden["gear"].isAutomatic = widget.getChecked("lytArmory.cbxIsAutomatic")
+  player.setProperty("irden", self.irden)
+
+  if player.equippedTech("legs") and player.equippedTech("legs") == "irdenstatmanager" then
+    player.unequipTech("irdenstatmanager")
+    player.makeTechUnavailable("irdenstatmanager")
+    world.sendEntityMessage(player.id(), "irdenStatManagerToShowMovement", 0)
+    if self.tech and self.tech ~= "irdenstatmanager" then
+      player.equipTech(self.tech)
+    end
+  end
 end

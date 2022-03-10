@@ -89,8 +89,7 @@ end
 
 
 function update()
-  promises:update()
-  if next(self.fight.players) == nil and self.fight.started then
+  if next(self.fight.players) == nil then
     clearFight()
     stagehand.die()
   end
