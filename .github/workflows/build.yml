@@ -4,10 +4,8 @@ on:
   push:
 
 jobs:
-  pack:
+  publish:
     runs-on: windows-latest
-    outputs:
-      version: ${{ steps.extract_version.outputs.version }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -18,7 +16,7 @@ jobs:
 
       - name: Get version
         id: extract_version
-        run: echo "{version}={$(jq -r '.version' _metadata)}" >> $GITHUB_OUTPUT
+        run: echo "version=$(jq -r '.version' _metadata)" >> $GITHUB_OUTPUT
 
       - name: 'Create GitHub Release'
         uses: softprops/action-gh-release@v1
