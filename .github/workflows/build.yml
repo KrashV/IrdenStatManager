@@ -19,7 +19,7 @@ jobs:
 
       - name: Get version
         id: extract_version
-        run: echo "::set-output name=version::$(jq -r '._metadata.version' _metadata)"
+        run: echo "::set-output name=version::$(jq -r '.version' _metadata)"
 
           
       - name: Create Release
