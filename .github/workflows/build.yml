@@ -16,7 +16,12 @@ jobs:
 
       - name: Get version
         id: extract_version
-        run: echo "version=$(jq -r '.version' _metadata)" >> $GITHUB_OUTPUT
+        run: |
+          echo "version=$(jq -r '.version' _metadata)" >> $GITHUB_ENV
+          echo "Extracted version: $version"
+
+      - name: Display Environment Variables
+        run: env
 
       - name: 'Create GitHub Release'
         uses: softprops/action-gh-release@v1
