@@ -20,27 +20,7 @@ jobs:
       - name: Get version
         id: extract_version
         run: echo "::set-output name=version::$(jq -r '.version' _metadata)"
-
-          
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.extract_version.outputs.version }}
-          release_name: Release ${{ steps.extract_version.outputs.version }}
-          body: |
-            Release notes for ${{ steps.extract_version.outputs.version }}.
-          draft: false
-          prerelease: false
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: IrdenStatManager
-          path: IrdenStatManager.pak
-
+        
       - name: 'Create GitHub Release'
         uses: softprops/action-gh-release@v1
         with:
