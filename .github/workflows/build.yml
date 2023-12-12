@@ -16,12 +16,11 @@ jobs:
       - name: Create Temporary Directory
         run: |
           mkdir temp_directory
-          copy . temp_directory\
+          copy . temp_directory
 
       - name: Run External Executable
-        working-directory: temp_directory
         run: |
-          \.github\tools\asset_packer.exe temp_directory\  \IrdenStatManager.pak
+          .github/tools/asset_packer.exe temp_directory  /IrdenStatManager.pak
 
       - name: Create Release
         id: create_release
@@ -40,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: IrdenStatManager
-          path: \IrdenStatManager.pak
+          path: /IrdenStatManager.pak
 
       - name: Clean Up Temporary Directory
         run: |
