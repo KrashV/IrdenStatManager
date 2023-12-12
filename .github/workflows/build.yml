@@ -21,7 +21,7 @@ jobs:
       - name: Run External Executable
         working-directory: temp_directory
         run: |
-          .github\tools\asset_packer.exe temp_directory\  \IrdenStatManager.pak
+          \.github\tools\asset_packer.exe temp_directory\  \IrdenStatManager.pak
 
       - name: Create Release
         id: create_release
