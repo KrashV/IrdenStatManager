@@ -13,18 +13,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Run External Executable
+      - name: Pak the repository
         run: |
           .github/tools/asset_packer.exe . -c .github/tools/packing.config /IrdenStatManager.pak
 
+      - name: Get version
+        id: extract_version
+        run: echo "::set-output name=version::$(jq -r '._metadata.version' _metadata)"
+
+          
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           tag_name: ${{ github.sha }}
-          release_name: Release ${{ github.sha }}
+          release_name: Release ${{ steps.extract_version.outputs.version }}
           body: |
             Release notes for ${{ github.sha }}.
           draft: false
