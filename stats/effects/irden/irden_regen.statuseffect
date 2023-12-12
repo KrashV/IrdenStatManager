@@ -1,0 +1,12 @@
+{
+  "name" : "irden_regen",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Регенерация",
+  "icon" : "/interface/statuses/maxhealth.png"
+}

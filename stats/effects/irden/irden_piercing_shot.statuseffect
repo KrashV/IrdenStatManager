@@ -1,0 +1,12 @@
+{
+  "name" : "irden_piercing_shot",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Бывший пробивной выстрел",
+  "icon" : "/interface/statuses/irden_shot.png"
+}

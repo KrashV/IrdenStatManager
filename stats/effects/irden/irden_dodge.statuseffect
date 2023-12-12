@@ -1,0 +1,12 @@
+{
+  "name" : "irden_dodge",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Успешное уклонение",
+  "icon" : "/interface/statuses/irden_dodge.png"
+}

@@ -1,0 +1,12 @@
+{
+  "name" : "irden_confused",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Растерянность",
+  "icon" : "/interface/statuses/irden_confused.png"
+}

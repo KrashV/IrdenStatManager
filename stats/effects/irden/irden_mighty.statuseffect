@@ -1,0 +1,12 @@
+{
+  "name" : "irden_mighty",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Раскрытие противника",
+  "icon" : "/interface/statuses/irden_attack.png"
+}

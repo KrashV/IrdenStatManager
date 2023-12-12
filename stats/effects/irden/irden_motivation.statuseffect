@@ -1,0 +1,12 @@
+{
+  "name" : "irden_motivation",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Мотивация",
+  "icon" : "/interface/statuses/jumpboost.png"
+}

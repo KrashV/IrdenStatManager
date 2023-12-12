@@ -1,0 +1,624 @@
+{
+  "gui": {
+		"background": {
+			"type" : "background",
+			"fileHeader" : "/interface/scripted/irdenstatmanager/ismitemregister/header.png",
+      "fileBody" : "/interface/scripted/irdenstatmanager/ismitemregister/body.png",
+      "fileFooter" : "/interface/scripted/irdenstatmanager/ismitemregister/footer.png"
+		},
+		"windowtitle" : {
+			"type" : "title",
+			"title" : "Irden Stat Manager Item Register",
+			"subtitle" : "<-- Вот сюда вставляй предмет, и начнём!",
+			"position" : [0, 254],
+			"icon" : {
+				"type" : "image",
+				"file" : "/interface/scripted/irdenstatmanager/staticons/locked.png",
+				"position" : [0, 0],
+				"zlevel" : -1
+			}
+		},
+
+		"itemSlot": {
+			"type": "itemslot",
+			"backingImage": "/interface/scripted/irdenstatmanager/ismitemregister/itemplaceholder.png",
+			"position": [5, 225],
+			"callback": "leftClickItemSlot",
+			"rightClickCallback": "rightClickItemSlot"
+		},
+
+		"lytItemBonuses": {
+			"type": "layout",
+			"rect": [0, 0, 700, 700],
+			"position": [0, 0],
+			"layoutType": "basic",
+			"visible": false,
+			"children": {
+				"saBonuses" : {
+					"type": "scrollArea",
+					"zlevel": 1,
+					"position": [10, 20],
+					"rect": [
+						10,
+						20,
+						180,
+						90
+					],
+					"children": {
+						"listBonuses" : {
+							"type" : "list",
+							"callback": "lineSelected",
+							"schema" : {
+								"selectedBG" : "/assetmissing.png",
+								"unselectedBG" : "/assetmissing.png",
+								"spacing" : [0, 1],
+								"memberSize" : [180, 10],
+								"listTemplate" : {
+									"bonusImage": {
+										"type": "image",
+										"position": [12, 0],
+										"maxSize": [10, 10],
+										"file": "/assetmissing.png"
+									},
+									"bonusName" : {
+										"type" : "label",
+										"position" : [25, 0],
+										"hAnchor" : "left",
+										"wrapWidth" : 200,
+										"value" : "Replace Me"
+									},
+									"bonusValue" : {
+										"type": "label",
+										"position": [140, 0],
+										"hAnchor": "mid",
+										"value": "0"
+									},
+									"btnDeleteBonus" : {
+										"type": "button",
+										"position": [150, -2],
+										"base": "/interface/scripted/irdenstatmanager/buttondelete.png",
+										"caption": "-",
+										"hover": "/interface/scripted/irdenstatmanager/buttondeletehover.png",
+										"callback": "deleteBonus"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+
+		"lytItems": {
+			"type": "layout",
+			"rect": [0, 0, 700, 700],
+			"position": [0, 0],
+			"layoutType": "basic",
+			"visible": false,
+			"children": {
+				"lblMeleeTab": {
+					"type": "label",
+					"hAnchor": "mid",
+					"value": "Ближний бой",
+					"position": [40, 180]
+				},
+				
+				"lblRangedTab": {
+					"type": "label",
+					"hAnchor": "mid",
+					"value": "Дальний бой",
+					"position": [130, 180]
+				},
+				
+				"lblMagicTab": {
+					"type": "label",
+					"hAnchor": "mid",
+					"value": "Маг. проводник",
+					"position": [215, 180]
+				},
+				"rgmeleeWeapons": {
+					"type": "radioGroup",
+					"position": [10, 130],
+					"callback": "null",
+					"buttons": [
+						{
+							"selected": true,
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 30]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 20]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 10]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 0]
+						}
+					]
+				},
+
+				"lblMeleeNo": {
+					"type": "label",
+					"position": [20, 160],
+					"value": "Нет"
+				},
+				"lblMeleeLight": {
+					"type": "label",
+					"position": [20, 150],
+					"value": "Лёгкое"
+				},
+				"lblMeleeMed": {
+					"type": "label",
+					"position": [20, 140],
+					"value": "Среднее"
+				},
+				"lblMeleeHeavy": {
+					"type": "label",
+					"position": [20, 130],
+					"value": "Тяжёлое"
+				},
+
+				"cbxIsAutomatic": {
+					"type": "button",
+					"checkable": true,
+					"position": [90, 180],
+					"base": "/interface/optionsmenu/checkboxnocheck.png",
+					"hover": "/interface/optionsmenu/checkboxnocheckhover.png",
+					"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+					"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+					"callback": "null"
+				},
+
+				"lblIsAutomatic": {
+					"type": "label",
+					"position": [90, 190],
+					"value": "Авт.",
+					"color": "gray"
+				},
+
+				"rgrangedWeapons": {
+					"type": "radioGroup",
+					"position": [100, 130],
+					"callback": "null",
+					"buttons": [
+						{
+							"selected": true,
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 30]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 20]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 10]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 0]
+						}
+					]
+				},
+
+				"lblRangedNo": {
+					"type": "label",
+					"position": [110, 160],
+					"value": "Нет"
+				},
+				"lblRangedOneHanded": {
+					"type": "label",
+					"position": [110, 150],
+					"value": "Одноручное"
+				},
+				"lblRangedTwoHanded": {
+					"type": "label",
+					"position": [110, 140],
+					"value": "Двуручное"
+				},
+				"lblRangedHeavy": {
+					"type": "label",
+					"position": [110, 130],
+					"value": "Артиллерия"
+				},
+
+				"rgmagicWeapons": {
+					"type": "radioGroup",
+					"position": [185, 130],
+					"callback": "null",
+					"buttons": [
+						{
+							"selected": true,
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 30]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 20]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 10]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 0]
+						}
+					]
+				},
+
+
+
+				"lblMagicNo": {
+					"type": "label",
+					"position": [195, 160],
+					"value": "Нет"
+				},
+				"lblMagicLight": {
+					"type": "label",
+					"position": [195, 150],
+					"value": "Компактный"
+				},
+				"lblMagicNormal": {
+					"type": "label",
+					"position": [195, 140],
+					"value": "Обычный"
+				},
+				"lblMagicHeavy": {
+					"type": "label",
+					"position": [195, 130],
+					"value": "Необычный"
+				},
+
+				"lblShieldsTab": {
+					"type": "label",
+					"hAnchor": "mid",
+					"value": "Щиты",
+					"position": [215, 90]
+				},
+
+
+				"rgShields": {
+					"type": "radioGroup",
+					"position": [185, 40],
+					"callback": "null",
+					"buttons": [
+						{
+							"selected": true,
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 30]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 20]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 10]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 0]
+						}
+					]
+				},
+
+
+				"lblShieldsNo": {
+					"type": "label",
+					"position": [195, 70],
+					"value": "Нет"
+				},
+				"lblShieldSmall": {
+					"type": "label",
+					"position": [195, 60],
+					"value": "Малый"
+				},
+				"lblShieldMedium": {
+					"type": "label",
+					"position": [195, 50],
+					"value": "Средний"
+				},
+				"lblShieldBig": {
+					"type": "label",
+					"position": [195, 40],
+					"value": "Большой"
+				}
+			}
+		},
+
+
+		"lytArmour": {
+			"type": "layout",
+			"rect": [0, 0, 700, 700],
+			"position": [0, 0],
+			"layoutType": "basic",
+			"visible": false,
+			"children": {
+				"lblArmourTab": {
+					"type": "label",
+					"hAnchor": "mid",
+					"value": "Физ. Броня",
+					"position": [40, 180]
+				},
+
+				"lblAmuletsTab": {
+					"type": "label",
+					"hAnchor": "mid",
+					"value": "Маг. Броня",
+					"position": [130, 180]
+				},
+
+				"rgArmour": {
+					"type": "radioGroup",
+					"position": [10, 130],
+					"callback": "null",
+					"buttons": [
+						{
+							"selected": true,
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 30]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 20]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 10]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 0]
+						}
+					]
+				},
+				"lblArmourNo": {
+					"type": "label",
+					"position": [20, 160],
+					"value": "Нет"
+				},
+				"lblArmourLight": {
+					"type": "label",
+					"position": [20, 150],
+					"value": "Лёгкая"
+				},
+				"lblArmourMed": {
+					"type": "label",
+					"position": [20, 140],
+					"value": "Средняя"
+				},
+				"lblArmourHeavy": {
+					"type": "label",
+					"position": [20, 130],
+					"value": "Тяжёлая"
+				},
+
+				"rgAmulets": {
+					"type": "radioGroup",
+					"position": [100, 130],
+					"callback": "null",
+					"buttons": [
+						{
+							"selected": true,
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 30]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 20]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 10]
+						},
+						{
+							"baseImage": "/interface/optionsmenu/checkboxnocheck.png",
+							"hoverImage": "/interface/optionsmenu/checkboxnocheckhover.png",
+							"baseImageChecked": "/interface/optionsmenu/checkboxcheck.png",
+							"hoverImageChecked": "/interface/optionsmenu/checkboxcheckhover.png",
+							"pressedOffset" : [0, 0],
+							"position": [0, 0]
+						}
+					]
+				},
+
+				"lblAmuletNo": {
+					"type": "label",
+					"position": [110, 160],
+					"value": "Нет"
+				},
+				"lblAmuletLight": {
+					"type": "label",
+					"position": [110, 150],
+					"value": "Компактный"
+				},
+				"lblAmuletNormal": {
+					"type": "label",
+					"position": [110, 140],
+					"value": "Обычный"
+				},
+				"lblAmuletHeavy": {
+					"type": "label",
+					"position": [110, 130],
+					"value": "Апотропей"
+				}
+
+			}
+		},
+
+		"lytBonuses": {
+			"type": "layout",
+			"rect": [0, 0, 700, 700],
+			"position": [0, 0],
+			"layoutType": "basic",
+			"zLevel": 20,
+			"visible": false,
+			"children": {
+				"btnClose": {
+					"type": "button",
+					"visible": true,
+					"position": [200, 203],
+					"caption": "Закрыть",
+					"base": "/interface/buttonred.png",
+					"hover": "/interface/buttonredhover.png",
+					"callback": "closeBonusPane"
+				},
+				"btnAdd": {
+					"type": "button",
+					"visible": true,
+					"position": [200, 163],
+					"caption": "Сохранить",
+					"base": "/interface/buttonactive.png",
+					"hover": "/interface/buttonactivehover.png",
+					"callback": "addBonusToItem"
+				},
+				"tbxNewSkillName": {
+					"type": "textbox",
+					"position": [15, 180],
+					"hint": "Имя бонуса",
+					"regex": "[^.]*",
+					"callback": "null",
+					"maxWidth": 100
+				},
+				"lblBonusType": {
+					"type": "label",
+					"position": [15, 150],
+					"value": "Все броски"
+				},
+				"tbxNewSkillValue": {
+					"type": "textbox",
+					"position": [115, 180],
+					"hint": "Бонус",
+					"regex": "\\-?\\d{0,2}",
+					"maxWidth": 20,
+					"callback": "null"
+				}
+			}
+		},
+
+
+		"btnAddBonuses": {
+			"type": "button",
+			"visible": false,
+			"position": [200, 203],
+			"caption": "+ Бонус",
+			"base": "/interface/button.png",
+			"hover": "/interface/buttonhover.png",
+			"callback": "openBonusPane"
+		},
+
+
+
+		"close" : {
+      "type" : "button",
+      "base" : "/interface/x.png",
+      "hover" : "/interface/xhover.png",
+      "pressed" : "/interface/xpress.png",
+      "pressedOffset" : [0, 0],
+      "position" : [245, 229]
+    }
+  },
+	"scriptWidgetCallbacks" : [
+		"leftClickItemSlot", "rightClickItemSlot", "openBonusPane", "closeBonusPane", "changeNewBonus", "addBonusToItem", "lineSelected", "deleteBonus"
+  ],
+	"scripts": [
+		"/interface/scripted/irdenstatmanager/ismitemregister/ismitemregister.lua"
+	]
+}

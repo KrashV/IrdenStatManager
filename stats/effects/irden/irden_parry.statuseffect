@@ -1,0 +1,12 @@
+{
+  "name" : "irden_parry",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Парирование врага",
+  "icon" : "/interface/statuses/irden_parry.png"
+}

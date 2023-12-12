@@ -1,0 +1,12 @@
+{
+  "name" : "irden_frozen",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Обморожение",
+  "icon" : "/interface/statuses/frozen.png"
+}

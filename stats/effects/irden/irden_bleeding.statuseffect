@@ -1,0 +1,12 @@
+{
+  "name" : "irden_bleeding",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Кровотечение",
+  "icon" : "/interface/statuses/absorb.png"
+}

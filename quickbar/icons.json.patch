@@ -1,0 +1,20 @@
+[
+  {
+    "op": "add",
+    "path": "/priority/-",
+    "value": {
+      "label": "Irden Stat Manager",
+      "icon": "/quickbar/irdenstatsicon.png",
+      "pane": "/interface/scripted/collections/collectionsgui.config"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/normal/-",
+    "value": {
+      "label": "Collections",
+      "icon": "/interface/scripted/collections/collectionsicon.png",
+      "pane": "/interface/scripted/collections/collectionsguidefault.config"
+    }
+  }
+]

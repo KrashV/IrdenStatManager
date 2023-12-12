@@ -1,0 +1,12 @@
+{
+  "name" : "irden_retry2",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Вторая повторная попытка",
+  "icon" : "/interface/statuses/irden_retry2.png"
+}

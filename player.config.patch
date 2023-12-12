@@ -1,0 +1,4 @@
+[
+    {"op" : "add", "path" : "/deploymentConfig/scripts/-","value" : "/scripts/irdenDrawables.lua"},
+    {"op" : "add", "path": "/genericScriptContexts/irdenMiniManager", "value": "/scripts/irdenMiniManagerHandler.lua"}
+]

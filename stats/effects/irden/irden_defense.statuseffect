@@ -1,0 +1,12 @@
+{
+  "name" : "irden_defense",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Глухая оборона",
+  "icon" : "/interface/statuses/defense.png"
+}

@@ -1,0 +1,12 @@
+{
+  "name" : "irden_shock",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Шок",
+  "icon" : "/interface/statuses/electric.png"
+}

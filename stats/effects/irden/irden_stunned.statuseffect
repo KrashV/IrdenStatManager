@@ -1,0 +1,12 @@
+{
+  "name" : "irden_stunned",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Ошеломление",
+  "icon" : "/interface/statuses/irden_brain.png"
+}

@@ -1,0 +1,12 @@
+{
+  "name" : "irden_pricking",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Колющий",
+  "icon" : "/interface/statuses/tranquilizer.png"
+}

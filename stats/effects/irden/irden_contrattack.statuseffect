@@ -1,0 +1,12 @@
+{
+  "name" : "irden_contrattack",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Возвращение",
+  "icon" : "/interface/statuses/thorns.png"
+}

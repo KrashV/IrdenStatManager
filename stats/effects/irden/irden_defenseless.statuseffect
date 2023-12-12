@@ -1,0 +1,12 @@
+{
+  "name" : "irden_defenseless",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Раскрытие",
+  "icon" : "/interface/statuses/irden_defenseless.png"
+}

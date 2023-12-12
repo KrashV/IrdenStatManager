@@ -1,0 +1,12 @@
+{
+  "name" : "irden_unknown",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Неизвестно",
+  "icon" : "/interface/statuses/irden_unknown.png"
+}

@@ -1,0 +1,12 @@
+{
+  "name" : "irden_poison",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Отравление",
+  "icon" : "/interface/statuses/poison.png"
+}

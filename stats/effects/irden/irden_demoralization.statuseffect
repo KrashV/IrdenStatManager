@@ -1,0 +1,12 @@
+{
+  "name" : "irden_demoralization",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Деморализация",
+  "icon" : "/interface/statuses/irden_demoralization.png"
+}

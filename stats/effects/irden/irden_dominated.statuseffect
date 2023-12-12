@@ -1,0 +1,12 @@
+{
+  "name" : "irden_dominated",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Доминирование",
+  "icon" : "/interface/statuses/sleep.png"
+}

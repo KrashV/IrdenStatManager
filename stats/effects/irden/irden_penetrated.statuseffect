@@ -1,0 +1,12 @@
+{
+  "name" : "irden_penetrated",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Пробитие",
+  "icon" : "/interface/statuses/irden_defenseless.png"
+}

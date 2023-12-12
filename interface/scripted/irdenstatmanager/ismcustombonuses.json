@@ -1,0 +1,451 @@
+[
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/all.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/all.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/all.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/all.png",
+    "data": {
+      "tag": "ALL",
+      "tooltip": {
+        "name": "Все броски",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/movement.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/movement.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/movement.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/movement.png",
+    "data": {
+      "tag": "MOVEMENT",
+      "tooltip": {
+        "name": "Движение",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/arm.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/arm.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/arm.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/arm.png",
+    "data": {
+      "tag": "DEFENSE",
+      "tooltip": {
+        "name": "Защита",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/phys_arm.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/phys_arm.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/phys_arm.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/phys_arm.png",
+    "data": {
+      "tag": "ARM",
+      "tooltip": {
+        "name": "Физ. броня",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/mag_arm.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/mag_arm.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/mag_arm.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/mag_arm.png",
+    "data": {
+      "tag": "MAGARM",
+      "tooltip": {
+        "name": "Маг. броня",
+        "fontSize": 5
+      }
+    }
+  },
+
+
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/str.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/str.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/str.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/str.png",
+    "data": {
+      "tag": "STR",
+      "tooltip": {
+        "name": "Сила",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/end.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/end.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/end.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/end.png",
+    "data": {
+      "tag": "END",
+      "tooltip": {
+        "name": "Выносливость",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/per.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/per.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/per.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/per.png",
+    "data": {
+      "tag": "PER",
+      "tooltip": {
+        "name": "Внимательность",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/ref.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/ref.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/ref.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/ref.png",
+    "data": {
+      "tag": "REF",
+      "tooltip": {
+        "name": "Рефлексы",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/initiative.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/initiative.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/initiative.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/initiative.png",
+    "data": {
+      "tag": "INITIATIVE",
+      "tooltip": {
+        "name": "Инициатива",
+        "fontSize": 5
+      }
+    }
+  },
+
+
+
+
+
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/mag.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/mag.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/mag.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/mag.png",
+    "data": {
+      "tag": "MAG",
+      "tooltip": {
+        "name": "Магия",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/wil.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/wil.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/wil.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/wil.png",
+    "data": {
+      "tag": "WIL",
+      "tooltip": {
+        "name": "Сила Воли",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/int.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/int.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/int.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/int.png",
+    "data": {
+      "tag": "INT",
+      "tooltip": {
+        "name": "Интеллект",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/det.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/det.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/det.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/det.png",
+    "data": {
+      "tag": "DET",
+      "tooltip": {
+        "name": "Решительность",
+        "fontSize": 5
+      }
+    }
+  },
+
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/end0.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/end0.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/end0.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/end0.png",
+    "data": {
+      "tag": "MAX_HEALTH",
+      "tooltip": {
+        "name": "Макс. Здоровье",
+        "fontSize": 5
+      }
+    }
+  },
+
+
+
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/hunting.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/hunting.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/hunting.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/hunting.png",
+    "data": {
+      "tag": "HUNTING",
+      "tooltip": {
+        "name": "Охота",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/mining.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/mining.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/mining.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/mining.png",
+    "data": {
+      "tag": "MINING",
+      "tooltip": {
+        "name": "Добыча руды",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/quarry.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/quarry.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/quarry.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/quarry.png",
+    "data": {
+      "tag": "QUARRY",
+      "tooltip": {
+        "name": "Камень",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/chopping.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/chopping.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/chopping.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/chopping.png",
+    "data": {
+      "tag": "CHOPPING",
+      "tooltip": {
+        "name": "Рубка деревьев",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/wooddoing.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/wooddoing.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/wooddoing.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/wooddoing.png",
+    "data": {
+      "tag": "WOODDOING",
+      "tooltip": {
+        "name": "Обработка дерева",
+        "fontSize": 5
+      }
+    }
+  },
+
+
+
+
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/fishing.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/fishing.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/fishing.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/fishing.png",
+    "data": {
+      "tag": "FISHING",
+      "tooltip": {
+        "name": "Рыбалка",
+        "fontSize": 5
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/damage_melee.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/damage_melee.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/damage_melee.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/damage_melee.png",
+    "data": {
+      "tag": "DAMAGE_melee",
+      "tooltip": {
+        "name": "Урон (физ.)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/damage_ranged.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/damage_ranged.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/damage_ranged.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/damage_ranged.png",
+    "data": {
+      "tag": "DAMAGE_ranged",
+      "tooltip": {
+        "name": "Урон (дальний)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/damage_magic.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/damage_magic.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/damage_magic.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/damage_magic.png",
+    "data": {
+      "tag": "DAMAGE_magic",
+      "tooltip": {
+        "name": "Урон (маг.)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/damage.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/damage.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/damage.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/damage.png",
+    "data": {
+      "tag": "DAMAGE",
+      "tooltip": {
+        "name": "Урон (весь)",
+        "fontSize": 6
+      }
+    }
+  },
+
+
+
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/herbalism.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/herbalism.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/herbalism.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/herbalism.png",
+    "data": {
+      "tag": "HERBALISM",
+      "tooltip": {
+        "name": "Травничество",
+        "fontSize": 5
+      }
+    }
+  },
+
+
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/attack_melee.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/attack_melee.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/attack_melee.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/attack_melee.png",
+    "data": {
+      "tag": "ATTACK_melee",
+      "tooltip": {
+        "name": "Атака (физ.)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/attack_ranged.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/attack_ranged.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/attack_ranged.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/attack_ranged.png",
+    "data": {
+      "tag": "ATTACK_ranged",
+      "tooltip": {
+        "name": "Атака (дальняя)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/attack_magic.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/attack_magic.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/attack_magic.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/attack_magic.png",
+    "data": {
+      "tag": "ATTACK_magic",
+      "tooltip": {
+        "name": "Атака  (маг.)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/attack.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/attack.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/attack.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/attack.png",
+    "data": {
+      "tag": "ATTACK",
+      "tooltip": {
+        "name": "Атака (вся)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/crafting_end.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/crafting_end.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/crafting_end.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/crafting_end.png",
+    "data": {
+      "tag": "CRAFTING_END",
+      "tooltip": {
+        "name": "Стамина (физ)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/crafting_int.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/crafting_int.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/crafting_int.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/crafting_int.png",
+    "data": {
+      "tag": "CRAFTING_INT",
+      "tooltip": {
+        "name": "Стамина (инт)",
+        "fontSize": 6
+      }
+    }
+  },
+  {
+    "baseImage": "/interface/scripted/irdenstatmanager/staticons/crafting_wil.png",
+    "hoverImage": "/interface/scripted/irdenstatmanager/staticons/crafting_wil.png",
+    "baseImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/crafting_wil.png",
+    "hoverImageChecked": "/interface/scripted/irdenstatmanager/staticons/checked/crafting_wil.png",
+    "data": {
+      "tag": "CRAFTING_WIL",
+      "tooltip": {
+        "name": "Стамина (маг)",
+        "fontSize": 6
+      }
+    }
+  }
+]

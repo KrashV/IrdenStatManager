@@ -1,0 +1,12 @@
+{
+  "name" : "irden_burning",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Горение",
+  "icon" : "/interface/statuses/fire.png"
+}

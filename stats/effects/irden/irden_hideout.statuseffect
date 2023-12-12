@@ -1,0 +1,12 @@
+{
+  "name" : "irden_hideout",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Глухое укрытие",
+  "icon" : "/interface/statuses/invisible.png"
+}

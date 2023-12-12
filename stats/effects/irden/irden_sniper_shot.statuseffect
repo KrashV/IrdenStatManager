@@ -1,0 +1,12 @@
+{
+  "name" : "irden_sniper_shot",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Прицельный выстрел противника",
+  "icon" : "/interface/statuses/irden_shot.png"
+}

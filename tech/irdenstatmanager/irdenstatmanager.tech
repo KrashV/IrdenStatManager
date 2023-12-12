@@ -1,0 +1,13 @@
+{
+  "name" : "irdenstatmanager",
+  "type" : "legs",
+
+  "scripts" : ["irdenstatmanager.lua"],
+
+  "description" : "Should disappear",
+  "shortDescription" : "Irden Stat Manager",
+  "rarity" : "Legendary",
+  "icon" : "/tech/rocketjump.png",
+
+  "chipCost" : 8
+}

@@ -1,0 +1,12 @@
+{
+  "name" : "irden_weak",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Ослабление",
+  "icon" : "/interface/statuses/irden_weak.png"
+}

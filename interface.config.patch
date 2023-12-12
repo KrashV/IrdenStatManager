@@ -1,0 +1,8 @@
+[ // -*- grammar-ext: json -*-
+  { "op": "replace", "path": "/mainBar/collections/base", "value": "/interface/icons/irdenstatmanager/irdenstatmanager.png:base" },
+  { "op": "replace", "path": "/mainBar/collections/hover", "value": "/interface/icons/irdenstatmanager/irdenstatmanager.png:hover" },
+  { "op": "replace", "path": "/mainBar/collections/open", "value": "/interface/icons/irdenstatmanager/irdenstatmanager.png:open" },
+  { "op": "replace", "path": "/mainBar/collections/openHover", "value": "/interface/icons/irdenstatmanager/irdenstatmanager.png:openHover" },
+  { "op": "replace", "path": "/mainBar/collections/pos/0", "value": -2 },
+  { "op" : "replace", "path" : "/cursorTooltip/collectionsText", "value" : "ISManager" }
+]

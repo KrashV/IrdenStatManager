@@ -1,0 +1,12 @@
+{
+  "name" : "irden_deafened",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+  ],
+
+  "label" : "Оглушение",
+  "icon" : "/interface/statuses/timefreeze.png"
+}
