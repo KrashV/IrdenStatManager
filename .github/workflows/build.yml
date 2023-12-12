@@ -20,10 +20,11 @@ jobs:
       - name: Get version
         id: extract_version
         run: echo "::set-output name=version::$(jq -r '.version' _metadata)"
-        
+
       - name: 'Create GitHub Release'
         uses: softprops/action-gh-release@v1
         with:
+          body_path: CHANGELOG.txt
           files: IrdenStatManager.pak       
           tag_name: v${{ steps.extract_version.outputs.version }}
           name: Release V${{ steps.extract_version.outputs.version }}
