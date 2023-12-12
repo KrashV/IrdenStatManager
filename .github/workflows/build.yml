@@ -41,11 +41,9 @@ jobs:
           name: IrdenStatManager
           path: IrdenStatManager.pak
 
-      - name: Upload Asset to Release
-        id: upload_asset
-        uses: actions/upload-release-asset@v1
+      - name: 'Create GitHub Release'
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: IrdenStatManager.pak
-          asset_name: IrdenStatManager
-          asset_content_type: application/octet-stream
+          files: IrdenStatManager.pak       
+          tag_name: v${{ steps.extract_version.outputs.version }}
+          name: Release V${{ steps.extract_version.outputs.version }}
