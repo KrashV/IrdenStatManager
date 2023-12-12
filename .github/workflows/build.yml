@@ -39,4 +39,4 @@ jobs:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
           thread-id:  ${{ vars.THREAD_ID }}
           filename: IrdenStatManager.pak  
-          content: "@<${{ vars.ROLE_MENTION }}> Irden Stat Manager V${{ steps.extract_version.outputs.version }}\n${{ steps.read_file.outputs.contents }}"
+          content: "<@&${{ vars.ROLE_MENTION }}> Irden Stat Manager V${{ steps.extract_version.outputs.version }}\n${{ steps.read_file.outputs.contents }}"
