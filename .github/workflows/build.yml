@@ -2,8 +2,6 @@ name: Generate Archive and Create Release
 
 on:
   push:
-    branches:
-      - release-workflow  # Replace with your branch name
 
 jobs:
   build:
