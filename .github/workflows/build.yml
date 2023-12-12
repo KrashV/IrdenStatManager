@@ -4,8 +4,9 @@ on:
   push:
 
 jobs:
-  publish:
+  build:
     runs-on: windows-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -16,12 +17,7 @@ jobs:
 
       - name: Get version
         id: extract_version
-        run: |
-          echo "version=$(jq -r '.version' _metadata)" >> $GITHUB_ENV
-          echo "Extracted version: $version"
-
-      - name: Display Environment Variables
-        run: env
+        run: echo "::set-output name=version::$(jq -r '.version' _metadata)"
 
       - name: 'Create GitHub Release'
         uses: softprops/action-gh-release@v1
