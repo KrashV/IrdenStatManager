@@ -1,0 +1,47 @@
+name: Generate Archive and Create Release
+
+on:
+  push:
+    branches:
+      - main  # Replace with your branch name
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Create Temporary Directory
+        run: |
+          mkdir temp_directory
+          copy . temp_directory\
+
+      - name: Run External Executable
+        working-directory: temp_directory
+        run: |
+          .github\tools\asset_packer.exe temp_directory\  \IrdenStatManager.pak
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.sha }}
+          release_name: Release ${{ github.sha }}
+          body: |
+            Release notes for ${{ github.sha }}.
+          draft: false
+          prerelease: false
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: IrdenStatManager
+          path: \IrdenStatManager.pak
+
+      - name: Clean Up Temporary Directory
+        run: |
+          rmdir /s /q temp_directory
