@@ -37,6 +37,6 @@ jobs:
         uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
-          thread-id:  ${{ secrets.THREAD_ID }}
+          thread-id:  ${{ vars.THREAD_ID }}
           filename: IrdenStatManager.pak  
-          content: "Irden Stat Manager V${{ steps.extract_version.outputs.version }}\n${{ steps.read_file.outputs.contents }}"
+          content: "@<${{ vars.ROLE_MENTION }}> Irden Stat Manager V${{ steps.extract_version.outputs.version }}\n${{ steps.read_file.outputs.contents }}"
