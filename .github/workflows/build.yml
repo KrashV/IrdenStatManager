@@ -15,7 +15,7 @@ jobs:
 
       - name: Pak the repository
         run: |
-          .github/tools/asset_packer.exe . -c .github/tools/packing.config /IrdenStatManager.pak
+          .github/tools/asset_packer.exe . -c .github/tools/packing.config IrdenStatManager.pak
 
       - name: Get version
         id: extract_version
@@ -39,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: IrdenStatManager
-          path: /IrdenStatManager.pak
+          path: IrdenStatManager.pak
