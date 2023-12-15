@@ -84,6 +84,9 @@ function init()
 
   self.irden.presets = self.irden.presets or {}
   self.irden.rollMode = tonumber(self.irden.rollMode) or 1
+  self.rollModes = {"Broadcast", "Party", "Silent", "Fight"}
+  self.rollModesTranslation = {"Общий", "Пати", "Втихую", "Бой"}
+
   self.weatherEffects = not not self.irden.weatherEffects
   widget.setChecked("lytCharacter.btnWeather", self.weatherEffects)
   self.irden.bonusGroups = loadCustomBonuses()
@@ -782,16 +785,17 @@ end
 
 
 function checkOutLoud()
-  self.irden.rollMode = (self.irden.rollMode % 3) + 1
+  self.irden.rollMode = (self.irden.rollMode % #self.rollModes) + 1
   setRollMode(self.irden.rollMode)
 end
 
 function setRollMode(mode)
   widget.setButtonImages("lytCharacter.btnOutloud", {
-    base = string.format("/interface/scripted/irdenstatmanager/staticons/rollmode%s.png", mode),
-    hover = string.format("/interface/scripted/irdenstatmanager/staticons/rollmode%s.png?brightness=-20", mode)
+    base = string.format("/interface/scripted/irdenstatmanager/staticons/rollmodes/%s.png", self.rollModes[mode]),
+    hover = string.format("/interface/scripted/irdenstatmanager/staticons/rollmodes/%s.png?brightness=-20", self.rollModes[mode])
   })
-  widget.setText("lytCharacter.lblRollMode", mode == 1 and "Общий чат" or mode == 2 and "Патичат" or "Втихую")
+  widget.setText("lytCharacter.lblRollMode", self.rollModesTranslation[mode])
+  player.setProperty("icc_current_roll_mode", self.rollModes[mode])
 end
 
 function changeHp()
