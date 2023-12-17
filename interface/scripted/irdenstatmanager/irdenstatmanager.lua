@@ -1766,7 +1766,8 @@ function savePreset()
       shield = widget.getSelectedOption("lytArmory.rgShields"),
       amulet =  widget.getSelectedOption("lytArmory.rgAmulets")
     },
-    isAutomatic = widget.getChecked("lytArmory.cbxIsAutomatic")
+    isAutomatic = widget.getChecked("lytArmory.cbxIsAutomatic"),
+    stats = copy(self.irden.stats)
   }
 
   self.irden.presets["" .. presetId] = preset
@@ -1775,6 +1776,11 @@ end
 function changePreset(id)
   if self.irden.presets[id] then
     loadWeapons(self.irden.presets[id])
+    if self.irden.presets[id].stats and next(self.irden.presets[id].stats) ~= nil then
+      loadStats(self.irden.presets[id].stats)
+    else
+      loadStats(self.irden.stats)
+    end
   end
 end
 
