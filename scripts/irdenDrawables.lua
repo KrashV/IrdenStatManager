@@ -52,6 +52,13 @@ function init()
     self.showPointer = not self.showPointer
     self.pointerPosition = pointerPosition
   end))
+
+  message.setHandler( "ism_your_turn", simpleHandler(function()
+    local conf = root.assetJson("/interface/scripted/irdenstatmanager/ismnotify/ismnotify.config")
+    conf.text = "Твой ход!"
+    conf.sound = "/sfx/tech/mech_horn_charge.ogg"
+    player.interact("ScriptPane", conf)
+  end))
 end
 
 

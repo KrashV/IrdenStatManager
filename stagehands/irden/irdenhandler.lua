@@ -85,7 +85,10 @@ function nextPlayer(playerId, toLeave, isAdmin)
 
   if toLeave then
     self.fight.players[playerUUID] = nil
+  else
+    world.sendEntityMessage(self.fight.currentPlayer, "ism_your_turn")
   end
+
 end
 
 
