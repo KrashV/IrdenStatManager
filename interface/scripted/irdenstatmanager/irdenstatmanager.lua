@@ -70,6 +70,7 @@ function init()
   self.defaultSubtitle = config.getParameter("gui").windowtitle.subtitle
   pane.setTitle(self.defaultTitle, self.defaultSubtitle)
 
+  self.confirmationLayout = "/interface/scripted/collections/collectionsgui.config:confirmationPaneLayout"
 
   self.characterStatsTextboxes = config.getParameter("characterStatsTextboxes")
   self.characterStats = config.getParameter("characterStats")
@@ -1129,6 +1130,22 @@ function sendAttacks()
     sendMessageToServer("statmanager", self.attackDataToSend) end)
 
   handleSpecificCases(self.specificCase.btnName, self.specificCase.data)
+
+  if self.irden.fightName and player.hasActiveQuest("irdeninitiative") then
+    promises:add(
+      player.confirm({
+        title = self.irden.fightName,
+        --subtitle = "Передать ход",
+        sourceEntityId = player.id(),
+        okCaption = "Да",
+        cancelCaption = "Нет",
+        paneLayout = self.confirmationLayout,
+        message = "Передать ход?"
+      }), function (result)
+        nextTurn()
+      end)
+  end
+
   widget.setVisible("lytWhoAttack", false)
   widget.setVisible("lytAttacks", true)
 end
@@ -1179,6 +1196,31 @@ function defense(btnName, data)
 end
 
 function handleSpecificCases(btnName, data)
+
+  local function confirm(title, subtitle, message, okCaption, cancelCaption, callback)
+    promises:add(
+      player.confirm({
+        title = title or "Подтверждение",
+        subtitle = subtitle,
+        sourceEntityId = player.id(),
+        okCaption = okCaption or "Да",
+        cancelCaption = cancelCaption or "Нет",
+        paneLayout = self.confirmationLayout,
+        message = message
+      }), callback)
+  end
+
+  local function enableBonus(group, name)
+    local bonus = findIndexAtValue(self.irden.bonusGroups[group].bonuses, "name", name)
+    if bonus then
+      if self.irden.bonusGroups[group].bonuses[bonus].listId then
+        widget.setChecked("lytMisc.lytBonuses.lytBaseBonuses.saBonuses.listBonuses." .. self.irden.bonusGroups[group].bonuses[bonus].listId .. ".bonusIsActive", true)
+        widget.setFontColor("lytMisc.lytBonuses.lytBaseBonuses.saBonuses.listBonuses." .. self.irden.bonusGroups[group].bonuses[bonus].listId .. ".bonusName", "yellow")
+      end
+      self.irden.bonusGroups[group].bonuses[bonus].ready = true
+    end
+  end
+
   if btnName == "btnRangedPiercing" then
     local rangedPiercingDebuff = findIndexAtValue(self.irden.bonusGroups["Общие"].bonuses, "name", "Бывший пробивной выстрел")
     if rangedPiercingDebuff then
@@ -1187,35 +1229,24 @@ function handleSpecificCases(btnName, data)
       self.irden.bonusGroups["Общие"].bonuses[rangedPiercingDebuff].ready = true
     end
   elseif data.type == "melee" and data.attackBonus then
-    widget.setData("lytSuccessfulAction", {bonusGroup = "Противник", bonusName = "Парирование"})
-    widget.setText("lytSuccessfulAction.lblText", "Запарировано?")
-    widget.setVisible("lytSuccessfulAction", true)
+    confirm(self.irden.fightName, _, "Запарировано?", _, _, function(result) 
+      if result then
+        enableBonus("Противник", "Парирование")
+      end
+    end)
   elseif btnName == "btnMeleeDodge" then
-    widget.setData("lytSuccessfulAction", {bonusGroup = "Общие", bonusName = "Успешное уклонение"})
-    widget.setText("lytSuccessfulAction.lblText", "Уклонился?")
-    widget.setVisible("lytSuccessfulAction", true)
+    confirm(self.irden.fightName, _, "Уклонился?", _, _, function(result) 
+      if result then
+        enableBonus("Общие", "Успешное уклонение")
+      end
+    end)
   elseif data.type == "magic" and data.attackBonus then
-    widget.setData("lytSuccessfulAction", {bonusGroup = "Противник", bonusName = "Контрзаклинание"})
-    widget.setText("lytSuccessfulAction.lblText", "Успешное контрзаклинание?")
-    widget.setVisible("lytSuccessfulAction", true)
+    confirm(self.irden.fightName, _, "Успешное контрзаклинание?", _, _, function(result) 
+      if result then
+        enableBonus("Противник", "Контрзаклинание")
+      end
+    end)
   end
-end
-
-function actionSuccess()
-  local data = widget.getData("lytSuccessfulAction")
-  local bonus = findIndexAtValue(self.irden.bonusGroups[data.bonusGroup].bonuses, "name", data.bonusName)
-  if bonus then
-    if self.irden.bonusGroups[data.bonusGroup].bonuses[bonus].listId then
-      widget.setChecked("lytMisc.lytBonuses.lytBaseBonuses.saBonuses.listBonuses." .. self.irden.bonusGroups[data.bonusGroup].bonuses[bonus].listId .. ".bonusIsActive", true)
-      widget.setFontColor("lytMisc.lytBonuses.lytBaseBonuses.saBonuses.listBonuses." .. self.irden.bonusGroups[data.bonusGroup].bonuses[bonus].listId .. ".bonusName", "yellow")
-    end
-    self.irden.bonusGroups[data.bonusGroup].bonuses[bonus].ready = true
-  end
-  widget.setVisible("lytSuccessfulAction", false)
-end
-
-function actionFail()
-  widget.setVisible("lytSuccessfulAction", false)
 end
 
 
