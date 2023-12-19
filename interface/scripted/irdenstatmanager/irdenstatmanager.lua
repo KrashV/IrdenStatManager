@@ -85,8 +85,8 @@ function init()
 
   self.irden.presets = self.irden.presets or {}
   self.irden.rollMode = tonumber(self.irden.rollMode) or 1
-  self.rollModes = {"Broadcast", "Party", "Silent", "Fight"}
-  self.rollModesTranslation = {"Общий", "Пати", "Втихую", "Бой"}
+  self.rollModes = {"Broadcast", "Party", "Silent", "Local", "Fight"}
+  self.rollModesTranslation = {"Общий", "Пати", "Втихую", "Близкий", "Бой"}
 
   self.weatherEffects = not not self.irden.weatherEffects
   widget.setChecked("lytCharacter.btnWeather", self.weatherEffects)
@@ -1142,7 +1142,9 @@ function sendAttacks()
         paneLayout = self.confirmationLayout,
         message = "Передать ход?"
       }), function (result)
-        nextTurn()
+        if result then
+          nextTurn()
+        end
       end)
   end
 
@@ -1533,12 +1535,36 @@ function sendMessageToServer(message, data)
   local adv = widget.getSelectedOption("rgAdvantage")
   if adv == 0 then data.advantage = nil else data.advantage = adv < 0 end
   data.rgseed = util.seedTime()
-  data.rollMode = self.irden.rollMode
+  data.rollMode = self.rollModes[self.irden.rollMode]
   data.weatherEffects = not widget.getChecked("lytCharacter.btnWeather")
   data.version = self.version
   data.onlySum = widget.getChecked("lytCharacter.btnHideStats") 
   if player.hasActiveQuest("irdeninitiative") then
     data.fight = player.getProperty("irdenfightName")
+  end
+
+  if data.rollMode == "Local" then
+    if root.getConfiguration then 
+      local radius = root.getConfiguration("icc_proximity_radius") or 100
+      local uniqueIds = {}
+      for _, pId in ipairs(world.playerQuery(world.entityPosition(player.id()), radius)) do 
+        table.insert(uniqueIds, world.entityUniqueId(pId))
+      end
+      data.uniqueIds = uniqueIds
+    end
+  elseif data.rollMode == "Fight" then
+    if player.hasActiveQuest("irdeninitiative") and self.irden.fightName then
+      promises:add(world.sendEntityMessage("irdenfighthandler_" .. self.irden.fightName, "getFight"), function(fight) 
+        local uniqueIds = {}
+        for _, fighter in pairs(fight.players) do 
+          table.insert(uniqueIds, fighter.uniqueId)
+        end
+        data.uniqueIds = uniqueIds
+        sb.logInfo(sb.print(data.uniqueIds))
+        world.sendEntityMessage(0, message, data)
+      end)
+      return
+    end
   end
   world.sendEntityMessage(0, message, data)
 end
