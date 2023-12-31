@@ -37,7 +37,7 @@ function loadResources()
       position = vec2.add(position, iconOffset),
       file = icon,
       mouseTransparent = true
-    }, "btn" .. event.event)
+    }, "img" .. event.event)
 
     -- Name
     widget.addChild("lytResources.lytButtons", {
