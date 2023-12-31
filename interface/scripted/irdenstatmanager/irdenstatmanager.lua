@@ -1560,7 +1560,6 @@ function sendMessageToServer(message, data)
           table.insert(uniqueIds, fighter.uniqueId)
         end
         data.uniqueIds = uniqueIds
-        sb.logInfo(sb.print(data.uniqueIds))
         world.sendEntityMessage(0, message, data)
       end)
       return

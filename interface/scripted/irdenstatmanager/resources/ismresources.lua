@@ -3,8 +3,10 @@ function loadResources()
   local position = {8, 161}
   local lblOffset = {45, 11}
   local iconOffset = {3, 3}
-  local totalAttemptsOffset = {35, -8}
-  local currentAttemptsOffset = {23, -8}
+  local slOffset = {5, -10}
+  local sliderAttemptsOffset = {-2, -6}
+  local leftAttemptsOffset = {70, -6}
+  local totalAttemptsOffset = {64, 17}
   widget.removeAllChildren("lytResources.lytButtons")
 
   for _, event in ipairs(events) do
@@ -48,22 +50,46 @@ function loadResources()
       mouseTransparent = true
     })
 
-    -- Current attempts
+    
+
+    -- Slider
+    widget.addChild("lytResources.lytButtons", {
+      type = "slider",
+      gridImage = "/interface/optionsmenu/smallselection.png",
+      position = vec2.add(position, slOffset),
+      callback = "updateResourceSlider",
+      data = event.event
+    }, "slResource" .. event.event)
+
+    -- Slider attempts
     widget.addChild("lytResources.lytButtons", {
       type = "label",
       hAnchor = "left",
       vAnchor = "mid",
       wrapWidth = 45,
       value = "???",
-      position = vec2.add(position, currentAttemptsOffset),
+      position = vec2.add(position, sliderAttemptsOffset),
       mouseTransparent = true
-    }, "lblCurrent" .. event.event)
+    }, "lblCurrent" .. event.event)    
+
+
+    -- Left attempts
+    widget.addChild("lytResources.lytButtons", {
+      type = "label",
+      hAnchor = "left",
+      vAnchor = "mid",
+      wrapWidth = 45,
+      value = "???",
+      position = vec2.add(position, leftAttemptsOffset),
+      mouseTransparent = true
+    }, "lblLeft" .. event.event)
 
     -- Total attempts
     widget.addChild("lytResources.lytButtons", {
       type = "label",
       hAnchor = "left",
       vAnchor = "mid",
+      color = "indigo",
       wrapWidth = 45,
       position = vec2.add(position, totalAttemptsOffset),
       mouseTransparent = true
@@ -77,6 +103,9 @@ function loadResources()
   end
 end
 
+function updateResourceSlider(_, type)
+  widget.setText("lytResources.lytButtons.lblCurrent" .. type, widget.getSliderValue("lytResources.lytButtons.slResource" .. type))
+end
 
 function perfectAttempts(stat)
   return  1 + (irdenUtils.addBonusToStat(self.irden["stats"][self.characterStats[stat]], stat) + 1) // 2
@@ -97,10 +126,19 @@ function getMaxResourceAttempts(type)
   return attempts[type] or "?"
 end
 
+function getLeftResourceAttempts(type)
+  return (self.irden.eventAttempts and self.irden.eventAttempts[type] and self.irden.eventAttempts[type]) or getMaxResourceAttempts(type)
+end
+
 function setResourseAttempts()
   for _, event in ipairs(root.assetJson("/irden_events.config")) do
-    widget.setText("lytResources.lytButtons.lblTotal" .. event.event, "из   " .. getMaxResourceAttempts(event.event))
-    widget.setText("lytResources.lytButtons.lblCurrent" .. event.event, (self.irden.eventAttempts and self.irden.eventAttempts[event.event] and self.irden.eventAttempts[event.event]) or getMaxResourceAttempts(event.event))
+    widget.setSliderRange("lytResources.lytButtons.slResource" .. event.event, 0, getLeftResourceAttempts(event.event), 1)
+    widget.setSliderValue("lytResources.lytButtons.slResource" .. event.event, getLeftResourceAttempts(event.event))
+
+    
+    widget.setText("lytResources.lytButtons.lblTotal" .. event.event, getMaxResourceAttempts(event.event))
+    widget.setText("lytResources.lytButtons.lblLeft" .. event.event, getLeftResourceAttempts(event.event))
+    widget.setText("lytResources.lytButtons.lblCurrent" .. event.event, widget.getSliderValue("lytResources.lytButtons.slResource" .. event.event))
   end
 end
 
@@ -112,23 +150,26 @@ end
 function resources(_, data)
   local type = data.type
 
-  local function decreaseCurrentAttempts(type)
+  local function decreaseLeftAttempts(type, n_attempts)
     self.irden.eventAttempts = self.irden.eventAttempts or {}
     self.irden.eventAttempts[type] = self.irden.eventAttempts[type] or getMaxResourceAttempts(type)
-    self.irden.eventAttempts[type] = math.max(self.irden.eventAttempts[type] - 1, 0)
+    self.irden.eventAttempts[type] = math.max(self.irden.eventAttempts[type] - n_attempts, 0)
   end
 
   if not self.editMode then
+    local n_attempts = widget.getSliderValue("lytResources.lytButtons.slResource" .. data.event)
+    n_attempts = n_attempts > 0 and n_attempts or 1
+
     sendMessageToServer("statmanager", {
       type = "resourceEvent", 
       action = data.action,
       source = world.entityName(player.id()),
       minCrit = self.irden.overrides.events[data.event] and self.irden.overrides.events[data.event].minCrit,
       bonuses = getBonuses({"ALL", table.unpack(data.tags)}, self.irden.stats[self.characterStats[data.stat]], data.stat),
-      data = data
+      data = data,
+      attempts = n_attempts
     })
-    decreaseCurrentAttempts(data.event)
-    widget.setText("lytResources.lytButtons.lblCurrent" .. data.event, self.irden.eventAttempts[data.event])
+    decreaseLeftAttempts(data.event, n_attempts)
   elseif not widget.active("lytEditResource") then
     for i, stat in ipairs({"STR", "END", "PER", "REF", "MAG", "WIL", "INT", "DET"}) do 
       if stat == data.stat then
@@ -143,6 +184,7 @@ function resources(_, data)
     widget.setText("lytEditResource.lblTitle", data.activeBonuses.name)
     widget.setVisible("lytEditResource", true)
   end
+  setResourseAttempts()
 end
 
 function editMode()
