@@ -108,27 +108,18 @@ end
 
 function sendMoney()
   if widget.getText("lytMoney.tbxAmount") == "" then
-    pane.setTitle(self.defaultTitle, string.format("^red;Введите сумму!^reset;"))
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Введите сумму!^reset;")
     return 
   end
 
   local pid = widget.getSelectedData("lytMoney.saPlayers.rgRecipient")
   if not pid then
-    pane.setTitle(self.defaultTitle, string.format("^red;Выберите игрока!^reset;"))
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Выберите игрока!^reset;")
     return
   end
 
   if not world.entityExists(pid.id) then
-    pane.setTitle(self.defaultTitle, string.format("^red;Игрок не на сервере!^reset;"))
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Игрок не на сервере!^reset;")
     return
   end
 

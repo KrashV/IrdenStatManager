@@ -61,7 +61,12 @@ function irdenUtils.calculateBonuses(value, bonuses)
   return sum
 end
 
-
+function irdenUtils.alert(text, time)
+  pane.setTitle(self.defaultTitle, text)
+  timers:add(time or 2, function()
+    pane.setTitle(self.defaultTitle, self.defaultSubtitle)
+  end)
+end
 
 
 function findIndexAtValue(t, attr, value)

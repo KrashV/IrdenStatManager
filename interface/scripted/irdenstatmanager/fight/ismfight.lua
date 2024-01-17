@@ -78,10 +78,7 @@ function enterFight()
       })
     end)
   else
-    pane.setTitle(self.defaultTitle, string.format("^red;Введите имя боя!^reset;"))
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Введите имя боя!^reset;")
   end
 end
 

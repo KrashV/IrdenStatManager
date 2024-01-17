@@ -54,26 +54,17 @@ function createInventoryItem()
   local amount = 1
 
   if not group then
-    pane.setTitle(self.defaultTitle, "^red;Выберите группу")
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Выберите группу")
     return
   end
 
   if name == "" then
-    pane.setTitle(self.defaultTitle, "^red;Введите имя предмета")
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Введите имя предмета")
     return
   end
   
   if findInventoryItem(name, group.group) then
-    pane.setTitle(self.defaultTitle, "^red;Такой предмет уже существует в этой группе")
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Такой предмет уже существует в этой группе")
     return
   end
 

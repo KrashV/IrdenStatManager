@@ -7,21 +7,21 @@ function init()
   self.fightName = self.questParams["fightName"]
 
   message.setHandler("leaveFight", function(_, isLocal)
-    world.sendEntityMessage("irdenfighthandler_" .. self.fightName, "nextTurn", player.id(), true, player.isAdmin())
+    world.sendEntityMessage("irdenfighthandler_" .. self.fightName, "nextTurn", player.id(), true)
     quest.complete()
+  end)
+  
+  message.setHandler("ism_kicked_from_fight", function(_, isLocal, fightName)
+    if self.fightName == fightName then
+      player.setProperty("irdenfightName", nil)
+      quest.complete()
+    end
   end)
 
   message.setHandler("nextTurn", function(_, isLocal, pUUID)
-    world.sendEntityMessage("irdenfighthandler_" .. self.fightName, "nextTurn", player.id(), false, player.isAdmin())
+    world.sendEntityMessage("irdenfighthandler_" .. self.fightName, "nextTurn", player.id(), false)
   end)
 
-  message.setHandler("clearFight", function(_, isLocal)
-    world.sendEntityMessage("irdenfighthandler_" .. self.fightName or "", "destroy")
-
-    world.setProperty("currentFight", nil)
-    world.setProperty("currentFights_v2", nil)
-    quest.complete()
-  end)
   --setPortraits()
   startUpdatingFights()
 end

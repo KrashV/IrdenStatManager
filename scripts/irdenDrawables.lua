@@ -53,9 +53,9 @@ function init()
     self.pointerPosition = pointerPosition
   end))
 
-  message.setHandler( "ism_your_turn", simpleHandler(function()
+  message.setHandler( "ism_your_turn", simpleHandler(function(fightName)
     local conf = root.assetJson("/interface/scripted/irdenstatmanager/ismnotify/ismnotify.config")
-    conf.text = "Твой ход!"
+    conf.text = string.format("^gray;[^red;%s^gray;]^reset;: Твой ход!", fightName)
     conf.sound = "/sfx/tech/mech_horn_charge.ogg"
     player.interact("ScriptPane", conf)
   end))

@@ -8,13 +8,15 @@ require "/interface/scripted/irdenstatmanager/fight/ismfight.lua"
 require "/interface/scripted/irdenstatmanager/inventory/isminventory.lua"
 require "/interface/scripted/irdenstatmanager/money/ismmoney.lua"
 require "/interface/scripted/irdenstatmanager/resources/ismresources.lua"
+require "/interface/scripted/irdenstatmanager/fightmanager/fightmanager.lua"
 
 
 function init()
   math.randomseed(util.seedTime())
   player.setProperty("irden_stat_manager_ui_open", true)
-  
+
   widget.setButtonEnabled("lytCharacter.btnClearFight", player.isAdmin())
+  widget.setButtonEnabled("rgTabs.6", player.isAdmin())
   widget.setVisible("lytCharacter.btnHideStats", player.isAdmin())
   widget.setVisible("lytCharacter.btnEnterFightAsEnemy", player.isAdmin())
 
@@ -703,10 +705,7 @@ function addBonusGroup()
 
   if groupName ~= "" then
     if self.irden.bonusGroups[groupName] then
-      pane.setTitle(self.defaultTitle, string.format("^red;Такая группа уже существует!^reset;"))
-      timers:add(2, function()
-        pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-      end)
+      irdenUtils.alert("^red;Такая группа уже существует!^reset;")
       return
     end
 
@@ -720,10 +719,7 @@ function addBonusGroup()
     loadBonuses()
     widget.setText("lytMisc.lytBonuses.lytCustomBonuses.tbxGroupName", "")
   else
-    pane.setTitle(self.defaultTitle, string.format("^red;Введите имя группы!^reset;"))
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Введите имя группы!^reset;")
   end
 
 end
@@ -739,10 +735,7 @@ function addBonus()
     bonus.tag = widget.getSelectedData("lytMisc.lytAddNewSkill.rgBonusTags").tag
 
     if findIndexAtValue(self.irden.bonusGroups[self.currentGroup].bonuses, "name", bonus.name) then
-      pane.setTitle(self.defaultTitle, string.format("^red;Бонус %s в этой группе уже существует!^reset;", bonus.name))
-      timers:add(2, function()
-        pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-      end)
+      irdenUtils.alert("^red;Бонус %s в этой группе уже существует!^reset;")
       return
     end
 
@@ -756,10 +749,7 @@ function addBonus()
     setHealthAndArmor()
     loadStatBonuses()
   else
-    pane.setTitle(self.defaultTitle, string.format("^red;Введите имя и значение бонуса!^reset;"))
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Введите имя и значение бонуса!^reset;")
   end
 end
 
@@ -1479,10 +1469,7 @@ function addAttack()
     widget.setText("lytAttacks.lytAddNewAttack.tbxAttackDescription", "")
     changeAttackType(_, {layout = widget.getSelectedData("lytAttacks.rgAttackTypes").layout})
   else
-    pane.setTitle(self.defaultTitle, string.format("^red;Введите имя атаки!^reset;"))
-    timers:add(2, function()
-      pane.setTitle(self.defaultTitle, self.defaultSubtitle)
-    end)
+    irdenUtils.alert("^red;Введите имя атаки!^reset;")
   end
 end
 
