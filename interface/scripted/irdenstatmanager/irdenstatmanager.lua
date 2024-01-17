@@ -1533,11 +1533,11 @@ function sendMessageToServer(message, data)
   if data.rollMode == "Local" then
     if root.getConfiguration then 
       local radius = root.getConfiguration("icc_proximity_radius") or 100
-      local uniqueIds = {}
+      local clientIds = {}
       for _, pId in ipairs(world.playerQuery(world.entityPosition(player.id()), radius)) do 
-        table.insert(uniqueIds, world.entityUniqueId(pId))
+        table.insert(clientIds, pId // -65536)
       end
-      data.uniqueIds = uniqueIds
+      data.clientIds = clientIds
     end
   elseif data.rollMode == "Fight" then
     if player.hasActiveQuest("irdeninitiative") and self.irden.fightName then
