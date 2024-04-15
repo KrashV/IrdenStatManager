@@ -1519,8 +1519,7 @@ end
 
 
 function sendMessageToServer(message, data)
-  local adv = widget.getSelectedOption("rgAdvantage")
-  if adv == 0 then data.advantage = nil else data.advantage = adv < 0 end
+  data.advantage = widget.getSelectedData("rgAdvantage").advantage
   data.rgseed = util.seedTime()
   data.rollMode = self.rollModes[self.irden.rollMode]
   data.weatherEffects = not widget.getChecked("lytCharacter.btnWeather")
