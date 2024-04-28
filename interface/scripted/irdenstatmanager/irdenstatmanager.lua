@@ -1524,7 +1524,7 @@ function sendMessageToServer(message, data)
   data.rollMode = self.rollModes[self.irden.rollMode]
   data.weatherEffects = not widget.getChecked("lytCharacter.btnWeather")
   data.version = self.version
-  data.onlySum = widget.getChecked("lytCharacter.btnHideStats") 
+  data.onlySum = widget.getChecked("lytCharacter.btnHideStats") and 1 or -1
   if player.hasActiveQuest("irdeninitiative") then
     data.fight = player.getProperty("irdenfightName")
   end

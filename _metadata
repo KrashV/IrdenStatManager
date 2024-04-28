@@ -1,9 +1,13 @@
 {
-  "version" : "4.24.4",
   "author" : "Degranon",
-  "requires" : [],
-  "description" : "Set the charasteristics of your characters",
-  "path" : ".",
+  "description" : "Set the charasteristics of your characters!\nFor Farlands of Irden only",
+  "friendlyName" : "Irden Stats Manager",
+  "includes" : ["StardustLib", "QuickbarMini"],
+  "link" : "steam://url/CommunityFilePage/3226136810",
   "name" : "Irden Stats Manager",
-  "includes" : ["StardustLib", "QuickbarMini"]
+  "path" : ".",
+  "requires" : [],
+  "steamContentId" : "3226136810",
+  "tags" : "Miscellaneous|User Interface|Mechanics",
+  "version" : "4.24.5"
 }
