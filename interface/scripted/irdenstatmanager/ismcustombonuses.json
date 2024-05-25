@@ -417,7 +417,7 @@
     "data": {
       "tag": "CRAFTING_END",
       "tooltip": {
-        "name": "Стамина (физ)",
+        "name": "Стамина",
         "fontSize": 6
       }
     }
@@ -430,7 +430,7 @@
     "data": {
       "tag": "CRAFTING_INT",
       "tooltip": {
-        "name": "Стамина (инт)",
+        "name": "Мыслетопливо",
         "fontSize": 6
       }
     }
@@ -443,7 +443,7 @@
     "data": {
       "tag": "CRAFTING_WIL",
       "tooltip": {
-        "name": "Стамина (маг)",
+        "name": "Мана",
         "fontSize": 6
       }
     }
