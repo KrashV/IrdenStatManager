@@ -1421,7 +1421,7 @@ function addAttack()
       }
     end
 
-    if not self.irden.attacks then self.irden.attacks = {} end
+    if not self.irden.attacks then self.irden.attacks = jarray() end
 
     table.insert(self.irden.attacks, {
       type = type,
