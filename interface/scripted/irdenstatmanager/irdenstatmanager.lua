@@ -1481,12 +1481,12 @@ function showMovement()
     hover = string.format("/interface/scripted/irdenstatmanager/staticons/movement%s.png?brightness=-20", self.movementType)
   })
 
-  if self.movementType > 2 then
-    self.tech = player.equippedTech("legs")
-    player.makeTechAvailable("irdenstatmanager")
-    player.enableTech("irdenstatmanager")
-    player.equipTech("irdenstatmanager")
-  end
+  --if self.movementType > 2 then
+  --  self.tech = player.equippedTech("legs")
+  --  player.makeTechAvailable("irdenstatmanager")
+  --  player.enableTech("irdenstatmanager")
+  --  player.equipTech("irdenstatmanager")
+  --end
 end
 
 
