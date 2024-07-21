@@ -1,6 +1,7 @@
 require "/scripts/messageutil.lua"
 require "/scripts/vec2.lua"
 require "/scripts/util.lua"
+require "/scripts/timer.lua"
 
 local oldInit = init;
 local oldUpdate = update;
@@ -14,6 +15,8 @@ function init()
     self.lineColor = "#3ffe13"
     self.numberColor = "white"
     self.movementMultiplier = 5
+
+    getPlayers()
 
     self.showPointer = false
     self.pointerPosition = { 0, 0 }
@@ -63,10 +66,20 @@ function init()
     end))
 end
 
+function getPlayers()
+    self.pIds = world.playerQuery(player.aimPosition(), 50, { withoutEntityId = player.id() })
+    player.say("123")
+    timers:add(0.5, function() getPlayers() end)
+end
+
 function update(...)
     oldUpdate(...)
-
-    if self.showLevel > 1 then
+    --if not player.getProperty("irden_stat_manager_ui_open") then
+    --    return
+    --end
+    if self.showLevel == 0 then
+        return
+    elseif self.showLevel > 1 then
         localAnimator.clearDrawables()
         -- Show players around
         local pId = player.id()
@@ -75,7 +88,7 @@ function update(...)
         local distanceInBlocks = self.movement * self.movementMultiplier
         local stanartDistanceInBlocks = self.standartMovement * self.movementMultiplier
 
-        for _, p in ipairs(world.playerQuery(mPosition, 50, { withoutEntityId = pId })) do
+        for _, p in ipairs(self.pIds) do
             local entityPos = world.entityPosition(p)
             local distance = vec2.sub(entityPos, mPosition)
             local blockDistance = vec2.mag(vec2.sub(distance, mouthOffset)) / distanceInBlocks
@@ -103,7 +116,7 @@ function update(...)
 
                 local drawable3 = {
                     image = "/interface/scripted/irdenstatmanager/numbers/armored.png",
-                    position = vec2.add(distance, { 1, 2 }),
+                    position = vec2.add(distance, { 1.2, 2 }),
                     color = self.numberColor,
                     fullbright = true
                 }
@@ -114,7 +127,6 @@ function update(...)
         end
 
         if self.showLevel > 2 then
-            localAnimator.clearDrawables()
             -- Show ruler
             local difference = { 0, 0 }
 
@@ -184,6 +196,5 @@ function update(...)
             end
         end
     end
-
-    promises:update()
+    timers:update(...)
 end
