@@ -68,7 +68,6 @@ end
 
 function getPlayers()
     self.pIds = world.playerQuery(player.aimPosition(), 50, { withoutEntityId = player.id() })
-    player.say("123")
     timers:add(0.5, function() getPlayers() end)
 end
 
