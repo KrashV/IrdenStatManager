@@ -73,9 +73,6 @@ end
 
 function update(...)
     oldUpdate(...)
-    --if not player.getProperty("irden_stat_manager_ui_open") then
-    --    return
-    --end
     if self.showLevel == 0 then
         return
     elseif self.showLevel > 1 then
@@ -89,6 +86,7 @@ function update(...)
 
         for _, p in ipairs(self.pIds) do
             local entityPos = world.entityPosition(p)
+            if entityPos == nil then return end
             local distance = vec2.sub(entityPos, mPosition)
             local blockDistance = vec2.mag(vec2.sub(distance, mouthOffset)) / distanceInBlocks
             local standartBlockDistance = vec2.mag(vec2.sub(distance, mouthOffset)) / stanartDistanceInBlocks
@@ -196,4 +194,5 @@ function update(...)
         end
     end
     timers:update(...)
+    promises:update()
 end
