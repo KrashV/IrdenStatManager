@@ -1,0 +1,17 @@
+{
+  "irden": {
+    "name": "Irden",
+    "bannerName" : "Farlands of Irden",
+    "binds": {
+      "ruler": {
+        "default": [
+        {
+          "type": "key",
+          "value": "O",
+          "mods": ["LShift"]
+        }],
+        "name": "Включить линейку"
+      }
+    }
+  }
+}

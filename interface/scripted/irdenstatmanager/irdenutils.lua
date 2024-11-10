@@ -52,6 +52,31 @@ function irdenUtils.getActiveBonusesByTags(tags)
   return activeBonuses
 end
 
+function irdenUtils.loadCustomBonuses()
+  local baseBonuses = root.assetJson("/irden_bonuses.config")
+  self.irden.bonusGroups = self.irden.bonusGroups or {}
+  -- For each group in custom bonuses do
+  for groupName, group in pairs(self.irden.bonusGroups) do 
+    -- If group does not exist at the base, add it whole
+    if not baseBonuses[groupName] then
+      baseBonuses[groupName] = group
+    else
+      baseBonuses[groupName].hidden = group.hidden
+      -- Loop through each bonus in the group
+      for _, bonus in ipairs(group.bonuses) do
+        -- If bonus does not exist in the base group (somehow), add it
+        local ind = findIndexAtValue(baseBonuses[groupName].bonuses, "name", bonus.name)
+        if not ind then
+          table.insert(baseBonuses[groupName].bonuses, bonus)
+        else
+          -- Else overwrite the base bonus with the new one
+          baseBonuses[groupName].bonuses[ind] = bonus
+        end
+      end
+    end
+  end
+  return baseBonuses
+end
 
 function irdenUtils.calculateBonuses(value, bonuses)
   local sum = value
