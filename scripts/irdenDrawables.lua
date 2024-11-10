@@ -12,51 +12,11 @@ function init()
     self.numberColor = "white"
     self.movementMultiplier = 5
 
-    self.irden = player.getProperty("irden") or {
-        stats = {
-          rollany = 0,
-          strength = 0,
-          endurance = 0,
-          perception = 0,
-          reflexes = 0,
-         
-          magic = 0,
-          willpower = 0,
-          intellect = 0,
-          determination = 0
-        },
-        gear = {
-          weapon = {
-            melee = -1,
-            ranged = -1,
-            magic = -1
-          },
-          armour = {
-            shield = -1,
-            armour = -1,
-            amulet = -1
-          }
-        },
-        bonusGroups = root.assetJson("/irden_bonuses.config") or {},
-        currentHp = 20,
-        rollMode = 1,
-        weatherEffects = true,
-        presets = {},
-        overrides = {
-          events = {}
-        },
-        crafts = {
-          END = 1,
-          WIL = 1,
-          INT = 1
-        },
-        eventAttempts = {},
-        inventory = {}
-      }
-    self.irden.bonusGroups = irdenUtils.loadCustomBonuses()
+    self.irden = irdenUtils.loadIrden()
 
     local movementBonus = root.assetJson("/interface/scripted/collections/collectionsgui.config").gui.lytArmory.children.rgArmour.buttons[self.irden.gear.armour.armour + 2].data.movementBonus
-    self.movement = 3 - (irdenUtils.getBonusByTag(movementBonus).value + irdenUtils.addBonusToStat(0, "MOVEMENT"))
+    
+    self.movement = irdenUtils.getBonusByTag(movementBonus).value + irdenUtils.addBonusToStat(0, "MOVEMENT")
 
     getPlayers()
 

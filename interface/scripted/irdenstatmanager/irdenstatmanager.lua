@@ -25,47 +25,7 @@ function init()
   widget.registerMemberCallback("lytMisc.lytBonuses.lytCustomBonuses.saBonuses.listBonuses", "deleteBonus", deleteBonus)
   widget.registerMemberCallback("lytWhoAttack.saPlayers", "playerSelected", playerSelected)
 
-  self.irden = player.getProperty("irden") or {
-    stats = {
-      rollany = 0,
-      strength = 0,
-      endurance = 0,
-      perception = 0,
-      reflexes = 0,
-     
-      magic = 0,
-      willpower = 0,
-      intellect = 0,
-      determination = 0
-    },
-    gear = {
-      weapon = {
-        melee = -1,
-        ranged = -1,
-        magic = -1
-      },
-      armour = {
-        shield = -1,
-        armour = -1,
-        amulet = -1
-      }
-    },
-    bonusGroups = root.assetJson("/irden_bonuses.config") or {},
-    currentHp = 20,
-    rollMode = 1,
-    weatherEffects = true,
-    presets = {},
-    overrides = {
-      events = {}
-    },
-    crafts = {
-      END = 1,
-      WIL = 1,
-      INT = 1
-    },
-    eventAttempts = {},
-    inventory = {}
-  }
+  self.irden = irdenUtils.loadIrden()
 
   self.version = config.getParameter("version")
   self.defaultTitle = string.format("%s v%s", config.getParameter("gui").windowtitle.title, self.version)
@@ -83,8 +43,6 @@ function init()
 
   self.movementType = 1
   
-  variousFixes()
-
   self.irden.presets = self.irden.presets or {}
   self.irden.rollMode = tonumber(self.irden.rollMode) or 1
   self.rollModes = {"Broadcast", "Party", "Silent", "Local", "Fight"}
@@ -92,7 +50,6 @@ function init()
 
   self.weatherEffects = not not self.irden.weatherEffects
   widget.setChecked("lytCharacter.btnWeather", self.weatherEffects)
-  self.irden.bonusGroups = irdenUtils.loadCustomBonuses()
   local cHp = self.irden.currentHp
   self.eventStats = {}
   loadResources()
@@ -181,41 +138,6 @@ function handleOpening()
     end
   end
 ]]
-end
-
-
-
-
-
-function variousFixes()
-
-  --Create overrides table
-  self.irden.overrides = self.irden.overrides or {
-    events = {}
-  }
-
-  -- Create crafts table
-  self.irden.crafts = self.irden.crafts or {
-    END = irdenUtils.getMaxStamina("END"),
-    WIL = irdenUtils.getMaxStamina("WIL"),
-    INT = irdenUtils.getMaxStamina("INT")
-  }
-
-  --Rename Особые атаки to Кастомные атаки
-  if self.irden.bonusGroups["Особые атаки"] then 
-    self.irden.bonusGroups["Кастомные атаки"] = self.irden.bonusGroups["Особые атаки"]
-    self.irden.bonusGroups["Особые атаки"] = nil
-  end
-  -- Rename Магические
-  if self.irden.bonusGroups["Магические атаки"] then 
-    self.irden.bonusGroups["Атаки магией"] = self.irden.bonusGroups["Магические атаки"]
-    self.irden.bonusGroups["Магические атаки"] = nil
-  end
-  self.irden.bonusGroups["Атаки магие"] = nil
-  -- Rename Магические
-  if self.irden.bonusGroups["Действия противника"] then
-    self.irden.bonusGroups["Действия противника"] = nil
-  end
 end
 
 

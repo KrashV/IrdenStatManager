@@ -1,5 +1,90 @@
 irdenUtils = {}
 
+function irdenUtils.loadIrden()
+  local irden = player.getProperty("irden") or {
+    stats = {
+      rollany = 0,
+      strength = 0,
+      endurance = 0,
+      perception = 0,
+      reflexes = 0,
+     
+      magic = 0,
+      willpower = 0,
+      intellect = 0,
+      determination = 0
+    },
+    gear = {
+      weapon = {
+        melee = -1,
+        ranged = -1,
+        magic = -1
+      },
+      armour = {
+        shield = -1,
+        armour = -1,
+        amulet = -1
+      }
+    },
+    bonusGroups = root.assetJson("/irden_bonuses.config") or {},
+    currentHp = 20,
+    rollMode = 1,
+    weatherEffects = true,
+    presets = {},
+    overrides = {
+      events = {}
+    },
+    crafts = {
+      END = 1,
+      WIL = 1,
+      INT = 1
+    },
+    eventAttempts = {},
+    inventory = {}
+  }
+  irden = variousFixes(irden)
+  irden.bonusGroups = irdenUtils.loadCustomBonuses(irden)
+  return irden
+end
+
+
+
+
+
+
+function variousFixes(irden)
+
+  --Create overrides table
+  irden.overrides = irden.overrides or {
+    events = {}
+  }
+
+  -- Create crafts table
+  irden.crafts = irden.crafts or {
+    END = irdenUtils.getMaxStamina("END"),
+    WIL = irdenUtils.getMaxStamina("WIL"),
+    INT = irdenUtils.getMaxStamina("INT")
+  }
+
+  --Rename Особые атаки to Кастомные атаки
+  if irden.bonusGroups["Особые атаки"] then 
+    irden.bonusGroups["Кастомные атаки"] = irden.bonusGroups["Особые атаки"]
+    irden.bonusGroups["Особые атаки"] = nil
+  end
+  -- Rename Магические
+  if irden.bonusGroups["Магические атаки"] then 
+    irden.bonusGroups["Атаки магией"] = irden.bonusGroups["Магические атаки"]
+    irden.bonusGroups["Магические атаки"] = nil
+  end
+
+  irden.bonusGroups["Атаки магие"] = nil
+  -- Rename Магические
+  if irden.bonusGroups["Действия противника"] then
+    irden.bonusGroups["Действия противника"] = nil
+  end
+  return irden
+end
+
 function irdenUtils.getMaxStamina(type)
   if type == "END" then
     return (irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") + 1) // 2 + 1 + irdenUtils.addBonusToStat(0, "CRAFTING_END")
@@ -52,11 +137,11 @@ function irdenUtils.getActiveBonusesByTags(tags)
   return activeBonuses
 end
 
-function irdenUtils.loadCustomBonuses()
+function irdenUtils.loadCustomBonuses(irden)
   local baseBonuses = root.assetJson("/irden_bonuses.config")
-  self.irden.bonusGroups = self.irden.bonusGroups or {}
+  irden.bonusGroups = irden.bonusGroups or {}
   -- For each group in custom bonuses do
-  for groupName, group in pairs(self.irden.bonusGroups) do 
+  for groupName, group in pairs(irden.bonusGroups) do 
     -- If group does not exist at the base, add it whole
     if not baseBonuses[groupName] then
       baseBonuses[groupName] = group
