@@ -45,7 +45,7 @@ jobs:
         uses: logickoder/google-drive-upload@main
         with:
           credentials: ${{ secrets.GCP_CREDENTIAL }}
-          filename: StarCustomChat.pak
+          filename: IrdenStatManager.pak  
           folderId: ${{ secrets.DRIVE_FOLDER_ID }}
           overwrite: "true"
           
