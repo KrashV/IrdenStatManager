@@ -40,3 +40,12 @@ jobs:
           thread-id:  ${{ vars.THREAD_ID }}
           filename: IrdenStatManager.pak  
           content: "<@&${{ vars.ROLE_MENTION }}> Irden Stat Manager V${{ steps.extract_version.outputs.version }}\n${{ steps.read_file.outputs.contents }}"
+
+      - name: Upload mod to Google Drive
+        uses: logickoder/google-drive-upload@main
+        with:
+          credentials: ${{ secrets.GCP_CREDENTIAL }}
+          filename: StarCustomChat.pak
+          folderId: ${{ secrets.DRIVE_FOLDER_ID }}
+          overwrite: "true"
+          
