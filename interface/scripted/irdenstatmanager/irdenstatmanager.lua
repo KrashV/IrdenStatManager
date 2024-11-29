@@ -45,8 +45,6 @@ function init()
   
   self.irden.presets = self.irden.presets or {}
   self.irden.rollMode = tonumber(self.irden.rollMode) or 1
-  self.rollModes = {"Broadcast", "Party", "Silent", "Local", "Fight"}
-  self.rollModesTranslation = {"Общий", "Пати", "Втихую", "Близкий", "Бой"}
 
   self.weatherEffects = not not self.irden.weatherEffects
   widget.setChecked("lytCharacter.btnWeather", self.weatherEffects)
@@ -145,7 +143,10 @@ function loadPreview()
 	widget.setText("lytCharacter.lblName", world.entityName(player.id()))
   widget.setText("lytCharacter.tbxFightName", self.irden.fightName or "")
   widget.setChecked("lytCharacter.btnHideStats", self.irden.onlySum)
-  setRollMode(self.irden.rollMode)
+  
+  widget.setSelectedOption("lytCharacter.lytRollModes.rgRollModes", self.irden.rollMode)
+  setRollMode("lytCharacter.lytRollModes.rgRollModes", widget.getData("lytCharacter.lytRollModes.rgRollModes." .. self.irden.rollMode))
+  
   widget.setChecked("lytCharacter.btnShowCurrentPlayer", player.getProperty("toShowCurrentPlayerIndicator", true))
   widget.setText("lytCharacter.tbxSkillName", "")
 	drawCharacter()
@@ -696,19 +697,23 @@ function changeBonusLayout(name, data)
   end
 end
 
+function setRollMode(wid, data)
 
-function checkOutLoud()
-  self.irden.rollMode = (self.irden.rollMode % #self.rollModes) + 1
-  setRollMode(self.irden.rollMode)
+  widget.setButtonImages("lytCharacter.btnChangeRollMode", {
+    base = string.format("/interface/scripted/irdenstatmanager/staticons/rollmodes/%s.png", data.mode),
+    hover = string.format("/interface/scripted/irdenstatmanager/staticons/rollmodes/%s.png?brightness=-20", data.mode)
+  })
+  widget.setText("lytCharacter.lblRollMode", data.defaultTooltip)
+
+  self.irden.rollMode = widget.getSelectedOption("lytCharacter.lytRollModes.rgRollModes")
+  widget.setVisible("lytCharacter.lytRollModes", false)
 end
 
-function setRollMode(mode)
-  widget.setButtonImages("lytCharacter.btnOutloud", {
-    base = string.format("/interface/scripted/irdenstatmanager/staticons/rollmodes/%s.png", self.rollModes[mode]),
-    hover = string.format("/interface/scripted/irdenstatmanager/staticons/rollmodes/%s.png?brightness=-20", self.rollModes[mode])
-  })
-  widget.setText("lytCharacter.lblRollMode", self.rollModesTranslation[mode])
-  player.setProperty("icc_current_roll_mode", self.rollModes[mode])
+function changeRollMode()
+  widget.setOptionEnabled("lytCharacter.lytRollModes.rgRollModes", 4, player.hasActiveQuest("irdeninitiative"))
+  widget.setOptionEnabled("lytCharacter.lytRollModes.rgRollModes", 3, #player.teamMembers() > 0)
+
+  widget.setVisible("lytCharacter.lytRollModes", not widget.active("lytCharacter.lytRollModes"))
 end
 
 function changeHp()
@@ -1443,7 +1448,7 @@ end
 function sendMessageToServer(message, data)
   data.advantage = widget.getSelectedData("rgAdvantage").advantage
   data.rgseed = util.seedTime()
-  data.rollMode = self.rollModes[self.irden.rollMode]
+  data.rollMode = widget.getSelectedData("lytCharacter.lytRollModes.rgRollModes").mode
   data.weatherEffects = not widget.getChecked("lytCharacter.btnWeather")
   data.version = self.version
   data.onlySum = widget.getChecked("lytCharacter.btnHideStats") and 1 or -1
