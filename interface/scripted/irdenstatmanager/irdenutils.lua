@@ -61,9 +61,9 @@ function variousFixes(irden)
 
   -- Create crafts table
   irden.crafts = irden.crafts or {
-    END = irdenUtils.getMaxStamina("END"),
-    WIL = irdenUtils.getMaxStamina("WIL"),
-    INT = irdenUtils.getMaxStamina("INT")
+    END = irdenUtils.getMaxStamina("END", irden),
+    WIL = irdenUtils.getMaxStamina("WIL", irden),
+    INT = irdenUtils.getMaxStamina("INT", irden)
   }
 
   --Rename Особые атаки to Кастомные атаки
@@ -85,18 +85,20 @@ function variousFixes(irden)
   return irden
 end
 
-function irdenUtils.getMaxStamina(type)
+function irdenUtils.getMaxStamina(type, irden)
+  local ird = irden or self.irden
   if type == "END" then
-    return (irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") + 1) // 2 + 1 + irdenUtils.addBonusToStat(0, "CRAFTING_END")
+    return (irdenUtils.addBonusToStat(ird["stats"]["endurance"], "END", ird) + 1) // 2 + 1 + irdenUtils.addBonusToStat(0, "CRAFTING_END", ird)
   elseif type == "WIL" then
-    return (irdenUtils.addBonusToStat(self.irden["stats"]["willpower"], "WIL") + 1) // 2 + 1 + irdenUtils.addBonusToStat(0, "CRAFTING_WIL")
+    return (irdenUtils.addBonusToStat(ird["stats"]["willpower"], "WIL", ird) + 1) // 2 + 1 + irdenUtils.addBonusToStat(0, "CRAFTING_WIL", ird)
   elseif type == "INT" then
-    return (irdenUtils.addBonusToStat(self.irden["stats"]["intellect"], "INT") + 1) // 2 + 1 + irdenUtils.addBonusToStat(0, "CRAFTING_INT")
+    return (irdenUtils.addBonusToStat(ird["stats"]["intellect"], "INT", ird) + 1) // 2 + 1 + irdenUtils.addBonusToStat(0, "CRAFTING_INT", ird)
   end
 end
 
-function irdenUtils.addBonusToStat(base, stat)
-  for groupName, bonusGroup in pairs(self.irden.bonusGroups) do
+function irdenUtils.addBonusToStat(base, stat, irden)
+  local ird = irden or self.irden
+  for groupName, bonusGroup in pairs(ird.bonusGroups) do
     for _, bonus in ipairs(bonusGroup.bonuses) do
       if bonus.tag == stat and bonus.ready then
         base = base + bonus.value
