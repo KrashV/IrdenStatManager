@@ -12,6 +12,11 @@ function init()
     self.numberColor = "white"
     self.movementMultiplier = 5
 
+    self.isOpenSB = root.assetOrigin and root.assetOrigin("/opensb/coconut.png")
+    if self.isOpenSB then
+        self.drawCanvas = interface.bindCanvas("drawISMRulerCanvas")
+    end
+
     self.irden = irdenUtils.loadIrden()
 
     local movementBonus = root.assetJson("/interface/scripted/collections/collectionsgui.config").gui.lytArmory.children.rgArmour.buttons[self.irden.gear.armour.armour + 2].data.movementBonus
@@ -74,9 +79,26 @@ function getPlayers()
     timers:add(0.5, function() getPlayers() end)
 end
 
+
+function drawDrawable(drawable)
+    if self.isOpenSB then
+        if drawable.image then
+            self.drawCanvas:drawImage(drawable.image, vec2.div(drawable.position, interface.scale()), drawable.scale / interface.scale(), drawable.color)
+        elseif drawable.line then 
+            self.drawCanvas:drawLine(vec2.div(drawable.line[1], interface.scale()), vec2.div(drawable.line[2], interface.scale()), drawable.color, drawable.width)
+        end
+    else
+        interface.drawDrawable(drawable, {0, 0}, 1)
+    end
+end
+
+
 function update(...)
-    
-    if _ENV["starExtensions"] and starExtensions.version() then
+    if self.drawCanvas then
+        self.drawCanvas:clear()
+    end
+
+    if _ENV["starExtensions"] and starExtensions.version() or self.isOpenSB then
         if input.bindDown("irden", "ruler") then
             self.showLevel = self.showLevel ~= 3 and 3 or 0
         end
@@ -111,7 +133,7 @@ function update(...)
                 scale = 3
             }
 
-            interface.drawDrawable(drawable1, {0, 0}, 1)
+            drawDrawable(drawable1)
 
             if distanceInBlocks ~= stanartDistanceInBlocks then
                 local drawable2 = {
@@ -130,8 +152,8 @@ function update(...)
                     scale = 3
                 }
 
-                interface.drawDrawable(drawable2, {0, 0}, 1)
-                interface.drawDrawable(drawable3, {0, 0}, 1)
+                drawDrawable(drawable2)
+                drawDrawable(drawable3)
             end
         end
 
@@ -149,66 +171,66 @@ function update(...)
                 difference = vec2.sub(self.pointerPosition, mPosition)
                 aimPosition = camera.worldToScreen(self.pointerPosition)
 
-                interface.drawDrawable({
+                drawDrawable({
                     image = "/interface/scripted/irdenstatmanager/numbers/arrow.png",
                     position = aimPosition,
                     color = self.numberColor,
                     fullbright = true,
                     scale = 4
-                }, {0, 0}, 1)
+                })
             else
                 difference = vec2.sub(player.aimPosition(), mPosition)
                 aimPosition = camera.worldToScreen(player.aimPosition())
             end
 
 
-            interface.drawDrawable({
+            drawDrawable({
                 line = { camera.worldToScreen(mouthPosition), { aimPosition[1], camera.worldToScreen(mouthPosition)[2] } },
                 position = { 0, 0 },
                 color = self.lineColor,
                 fullbright = true,
                 width = 2
-            }, {0, 0}, 1)
+            })
 
-            interface.drawDrawable({
+            drawDrawable({
                 line = { { aimPosition[1], camera.worldToScreen(mouthPosition)[2] }, aimPosition },
                 position = { 0, 0 },
                 color = self.lineColor,
                 fullbright = true,
                 width = 2
-            }, {0, 0}, 1)
+            })
 
 
             local blockDistance = vec2.mag(vec2.sub(difference, mouthOffset)) / distanceInBlocks
             local n = blockDistance < 0.3 and "X" or math.min(math.floor(blockDistance + 1), 9)
 
-            interface.drawDrawable({
+            drawDrawable({
                 image = string.format("/interface/scripted/irdenstatmanager/numbers/%s.png", n),
                 position = aimPosition,
                 color = self.numberColor,
                 fullbright = true,
                 scale = 4
-            }, {0, 0}, 1)
+            })
 
             if distanceInBlocks ~= stanartDistanceInBlocks then
                 local standartBlockDistance = vec2.mag(vec2.sub(difference, mouthOffset)) / stanartDistanceInBlocks
                 local v = blockDistance < 0.3 and "X" or math.min(math.floor(standartBlockDistance + 1), 9)
 
-                interface.drawDrawable({
+                drawDrawable({
                     image = string.format("/interface/scripted/irdenstatmanager/numbers/%s.png", v),
                     position = { aimPosition[1], aimPosition[2] + 45 },
                     color = self.numberColor,
                     fullbright = true,
                     scale = 4
-                }, {0, 0}, 1)
+                })
 
-                interface.drawDrawable({
+                drawDrawable({
                     image = "/interface/scripted/irdenstatmanager/numbers/armored.png",
                     position = { aimPosition[1] + 30, aimPosition[2] },
                     color = self.numberColor,
                     fullbright = true,
                     scale = 3
-                }, {0, 0}, 1)
+                })
             end
         end
     end
