@@ -127,7 +127,7 @@ function update(...)
 
             local drawable1 = {
                 image = string.format("/interface/scripted/irdenstatmanager/numbers/%s.png", n),
-                position = camera.worldToScreen(vec2.add(mPosition, { 0, 2 })),
+                position = camera.worldToScreen(vec2.add(entityPos, { 0, 2 })),
                 color = self.numberColor,
                 fullbright = true,
                 scale = 3
@@ -138,7 +138,7 @@ function update(...)
             if distanceInBlocks ~= stanartDistanceInBlocks then
                 local drawable2 = {
                     image = string.format("/interface/scripted/irdenstatmanager/numbers/%s.png", v),
-                    position = camera.worldToScreen(vec2.add(mPosition, { 0, 3.0 })),
+                    position = camera.worldToScreen(vec2.add(entityPos, { 0, 3.0 })),
                     color = self.numberColor,
                     fullbright = true,
                     scale = 3
@@ -146,7 +146,7 @@ function update(...)
 
                 local drawable3 = {
                     image = "/interface/scripted/irdenstatmanager/numbers/armored.png",
-                    position = camera.worldToScreen(vec2.add(mPosition, { 1.0, 2 })),
+                    position = camera.worldToScreen(vec2.add(entityPos, { 1.0, 2 })),
                     color = self.numberColor,
                     fullbright = true,
                     scale = 3
