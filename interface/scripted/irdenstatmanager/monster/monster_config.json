@@ -1,0 +1,127 @@
+{
+    "animationCustom": {
+        "transformationGroups": {
+            "body": {
+                "interpolated": true
+            }
+        },
+        "animatedParts": {
+            "stateTypes": {
+                "body": {
+                    "states": {
+                        "idle": {
+                            "properties": {
+                                "persistentSound": ""
+                            },
+                            "mode": "loop",
+                            "cycle": 1,
+                            "frames": 1
+                        }
+                    },
+                    "default": "idle",
+                    "priority": 0
+                },
+                "damage": {
+                    "states": {
+                        "none": {
+                            "frames": 1
+                        },
+                        "leave": {
+                            "cycle": 0.25,
+                            "frames": 4
+                        },
+                        "stunned": {
+                            "properties": {
+                                "persistentSound": ""
+                            },
+                            "mode": "loop",
+                            "cycle": 0.15,
+                            "frames": 2
+                        }
+                    },
+                    "default": "none",
+                    "priority": 3
+                }
+            },
+            "parts": {
+                "body": {
+                    "properties": {
+                        "fullbright": false,
+                        "transformationGroups": ["body"],
+                        "offset": [0, 0]
+                    },
+                    "partStates": {
+                        "body": {
+                            "idle": {
+                                "properties": {
+                                    "image": ""
+                                }
+                            },
+                            "walk": {
+                                "properties": {
+                                    "image": ""
+                                }
+                            },
+                            "fall": {
+                                "properties": {
+                                    "image": ""
+                                }
+                            }
+                        },
+                        "damage": {
+                            "leave": {
+                                "properties": {
+                                    "image": ""
+                                }
+                            },
+                            "stunned": {
+                                "properties": {
+                                    "image": ""
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "statusSettings": {
+        "stats": {
+            "maxHealth": {
+                "baseValue": 6000.0
+            },
+            "healthRegen" : {
+                "baseValue" : 0.0
+            }
+        }
+    },
+    "scripts": [
+        "/interface/scripted/irdenstatmanager/monster/custom_monster.lua"
+    ],
+    "damageTeamType" : "ghostly",
+    "appliesEnvironmentStatusEffects" : false,
+    "appliesWeatherStatusEffects" : false,
+    "clientEntityMode": "ClientMasterAllowed",
+    "capturable": false,
+    "aggressive": false,
+    "level" : 2.14,
+    "metaBoundBox" : null,
+    "touchDamage" : {
+        "poly" : null
+    },
+    "scale": 0.1,
+    "movementSettings": {
+        "collisionPoly" : [[0, 0], [0, 0], [0, 0], [0, 0]],
+        "airFriction": 0,
+        "ignorePlatformCollision": true,
+        "maxMovementPerStep": 1,
+        "bounceFactor": 0,
+        "collisionEnabled": false,
+        "gravityMultiplier": 0,
+        "liquidFriction": 0
+    },
+    "knockoutAnimationStates": {
+        "damage": "leave"
+    },
+    "relocatable": false
+}
