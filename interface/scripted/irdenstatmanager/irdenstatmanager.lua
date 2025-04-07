@@ -18,6 +18,7 @@ function init()
   widget.setButtonEnabled("lytCharacter.btnClearFight", player.isAdmin())
   widget.setButtonEnabled("rgTabs.6", player.isAdmin())
   widget.setVisible("lytCharacter.btnHideStats", player.isAdmin())
+  widget.setVisible("lytCharacter.btnSpawnHealthBar", player.isAdmin())
   widget.setVisible("lytCharacter.btnEnterFightAsEnemy", player.isAdmin())
 
   widget.registerMemberCallback("lytMisc.lytBonuses.lytBaseBonuses.saBonuses.listBonuses", "setBonus", setBonus)
@@ -722,6 +723,7 @@ function changeHp()
 
   self.irden.currentHp = tonumber(widget.getText("lytCharacter.tbxCurrentHp")) or 0
   local newValue = self.irden.currentHp / maxHp
+  updateHealthBar(self.irden.currentHp, maxHp)
 
   if (newValue ~= oldHP or not self.firstDraw) then
     local aPrgCurrentHp = AnimatedWidget:bind("lytCharacter.prgCurrentHp")
@@ -1215,6 +1217,91 @@ function resetBaseBonuses()
   loadAttacks()
 end
 
+
+
+function ensureHealthbarMonster(callback)
+  if self.healthbarMonster and world.entityExists(self.healthbarMonster) then
+    if callback then callback(self.healthbarMonster, true) end
+    return
+  end
+
+  local monsters = world.monsterQuery(world.entityPosition(player.id()), 5)
+
+  if #monsters == 0 then
+    if callback then callback(nil, false) end
+    return
+  end
+
+  local found = false
+  local responsesExpected = #monsters
+  local responsesReceived = 0
+
+  for _, monster in pairs(monsters) do
+    promises:add(world.sendEntityMessage(monster, "isHealthbarMonster", player.id()),
+    function(result)
+      responsesReceived = responsesReceived + 1
+      if result == true and not found then
+        found = true
+        self.healthbarMonster = monster
+        if callback then callback(monster, true) end
+      elseif responsesReceived >= responsesExpected and not found then
+        if callback then callback(nil, false) end
+      end
+    end,
+    function(_)
+      responsesReceived = responsesReceived + 1
+      if responsesReceived >= responsesExpected and not found then
+        if callback then callback(nil, false) end
+      end
+    end)
+  end
+end
+
+
+function spawnHealthBar()
+  local checked = widget.getChecked("lytCharacter.btnSpawnHealthBar")
+
+  if checked then
+    ensureHealthbarMonster(function(_, found)
+      if found then
+        return
+      end
+      local monsterData = root.assetJson("/interface/scripted/irdenstatmanager/monster/monster_config.json")
+      monsterData.parentEntity = player.id()
+      self.healthbarMonster = world.spawnMonster("pteropod", world.entityPosition(player.id()), monsterData)
+      local currhp = tonumber(widget.getText("lytCharacter.tbxCurrentHp")) or 0
+      updateHealthBar(currhp, getMaxHp())
+    end)
+  else
+    destroyHealthbar()
+  end
+end
+
+
+function updateHealthBar(currentHp, maxHp)
+  ensureHealthbarMonster(function(monsterId)
+    if monsterId then
+      world.callScriptedEntity(monsterId, "updateHealth", currentHp, maxHp)
+    else
+    end
+  end)
+end
+
+
+function destroyHealthbar()
+  ensureHealthbarMonster(function(monsterId)
+    if monsterId then
+      world.callScriptedEntity(monsterId, "destroy")
+    end
+    self.healthbarMonster = nil
+  end)
+end
+
+function getMaxHp()
+  local maxHp = 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") + irdenUtils.addBonusToStat(0, "MAX_HEALTH")
+  return maxHp
+end
+
 function subtractHP(value, kind)
   local physArmour = irdenUtils.addBonusToStat(irdenUtils.getBonusByTag(widget.getSelectedData("lytArmory.rgArmour").armourBonus).value, "ARM")
   local magArm = irdenUtils.addBonusToStat(irdenUtils.getBonusByTag(widget.getSelectedData("lytArmory.rgAmulets").blockBonus).value, "MAGARM")
@@ -1224,11 +1311,13 @@ function subtractHP(value, kind)
 
   if subhp then
     local currhp = tonumber(widget.getText("lytCharacter.tbxCurrentHp")) or 0
+    local maxHp = getMaxHp()
     if kind ~= "HEAL" then
       widget.setText("lytCharacter.tbxCurrentHp", math.max(0, currhp - subhp))
+      updateHealthBar(math.max(0, currhp - subhp), maxHp)
     else
-      local maxHp = 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") + irdenUtils.addBonusToStat(0, "MAX_HEALTH")
       widget.setText("lytCharacter.tbxCurrentHp", math.min(maxHp, currhp + subhp))
+      updateHealthBar(math.min(maxHp, currhp + subhp), maxHp)
     end
   end
 end
