@@ -1701,6 +1701,15 @@ function registerItem()
   player.interact("ScriptPane", root.assetJson("/interface/scripted/irdenstatmanager/ismitemregister/ismitemregister.json"))
 end
 
+function exportData()
+  clipboard.setText(sb.printJson(self.irden, 2))
+  interface.queueMessage("^green;Данные скопированы в буфер обмена!^reset;")
+end
+
+function importData()
+  player.interact("ScriptPane", root.assetJson("/interface/scripted/irdenstatmanager/export/confirmImport/confirmImport.config"))
+  pane.dismiss()
+end
 
 function uninit()
   self.irden["gear"].isAutomatic = widget.getChecked("lytArmory.cbxIsAutomatic")
