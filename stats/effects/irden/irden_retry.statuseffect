@@ -5,7 +5,10 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_retry.lua"
   ],
+
+   "animationConfig": "irden_retry.animation",
 
   "label" : "Повторная попытка",
   "icon" : "/interface/statuses/irden_retry.png"

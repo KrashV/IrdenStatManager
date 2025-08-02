@@ -5,7 +5,10 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_parry.lua"
   ],
+
+  "animationConfig": "irden_parry.animation",
 
   "label" : "Парирование врага",
   "icon" : "/interface/statuses/irden_parry.png"

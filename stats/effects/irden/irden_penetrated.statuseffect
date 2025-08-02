@@ -5,8 +5,9 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_penetrated.lua"
   ],
 
   "label" : "Пробитие",
-  "icon" : "/interface/statuses/irden_defenseless.png"
+  "icon" : "/interface/statuses/irden_penetrated.png"
 }

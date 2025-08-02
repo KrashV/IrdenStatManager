@@ -5,7 +5,10 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_defenseless.lua"
   ],
+
+  "animationConfig": "irden_defenseless.animation",
 
   "label" : "Раскрытие",
   "icon" : "/interface/statuses/irden_defenseless.png"

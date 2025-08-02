@@ -5,8 +5,11 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_bleeding.lua"
   ],
 
+  "animationConfig": "irden_bleeding.animation",
+
   "label" : "Кровотечение",
-  "icon" : "/interface/statuses/absorb.png"
+  "icon" : "/interface/statuses/irden_bleeding.png"
 }

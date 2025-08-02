@@ -5,7 +5,10 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_weak.lua"
   ],
+
+  "animationConfig": "irden_weak.animation",
 
   "label" : "Ослабление",
   "icon" : "/interface/statuses/irden_weak.png"

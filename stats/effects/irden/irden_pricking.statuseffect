@@ -5,8 +5,11 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_pricking.lua"
   ],
 
+  "animationConfig": "irden_pricking.animation",
+
   "label" : "Колющий",
-  "icon" : "/interface/statuses/tranquilizer.png"
+  "icon" : "/interface/statuses/irden_pricking.png"
 }

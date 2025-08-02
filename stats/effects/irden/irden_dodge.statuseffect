@@ -5,7 +5,10 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_dodge.lua"
   ],
+
+  "animationConfig": "irden_dodge.animation",
 
   "label" : "Успешное уклонение",
   "icon" : "/interface/statuses/irden_dodge.png"

@@ -1,0 +1,70 @@
+{
+  "particleEmitters" : {
+    "manaweak" : {
+      "enabled" : true,
+      "emissionRate" : 4.0,
+      "particles" : [
+        {
+          "particle" : {
+            "type" : "animated",
+            "animation" : "/animations/sparkles/sparkle1.animation",
+            "fullbright": true,
+            "size" : 0.5,
+            "position" : [0.0, 0.0],
+            "offsetRegion" : [0, 0, 0, 0],
+            "initialVelocity" : [2, 2.0],
+            "finalVelocity" : [5, 2.0],
+            "approach" : [0, 5],
+            "timeToLive" : 0.85,
+            "variance" : {
+              "initialVelocity" : [-2, 1.0],
+              "finalVelocity" : [-5, 3.0],
+              "size" : 0.3
+            }
+          }
+        },
+        {
+          "particle" : {
+            "type" : "animated",
+            "animation" : "/animations/sparkles/sparkle3.animation",
+            "fullbright": true,
+            "size" : 0.5,
+            "position" : [0.0, 0.0],
+            "offsetRegion" : [0, 0, 0, 0],
+            "initialVelocity" : [2, 1.0],
+            "finalVelocity" : [2, 1.0],
+            "approach" : [0, 5],
+            "timeToLive" : 0.85,
+            "variance" : {
+              "initialVelocity" : [-2, 1.0],
+              "finalVelocity" : [-2, 1.0],
+              "size" : 0.3
+            }
+          }
+        },
+        {
+          "particle" : {
+            "type" : "animated",
+            "size" : 1,
+            "animation" : "/animations/sparkles/sparkle2.animation",
+            "fullbright": true,
+            "destructionAction" : "shrink",
+            "destructionTime" : 0.5,
+            "initialVelocity" : [-2, 2.0],
+            "finalVelocity" : [-5, 2.0],
+            "position" : [0.0, 0.0],
+            "approach" : [2, 20],
+            "timeToLive" : 0.85,
+            "light" : [71, 8, 8],
+            "layer" : "front",
+            "variance" : {
+              "initialVelocity" : [2, 1.0],
+              "finalVelocity" : [5, 3.0],
+              "size" : 0.5
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -5,8 +5,11 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_hideout.lua"
   ],
 
+  "animationConfig": "irden_hideout.animation",
+
   "label" : "Глухое укрытие",
-  "icon" : "/interface/statuses/invisible.png"
+  "icon" : "/interface/statuses/irden_hideout.png"
 }

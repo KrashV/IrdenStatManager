@@ -1,0 +1,38 @@
+{
+  "particleEmitters" : {
+    "deaf" : {
+      "enabled" : true,
+      "emissionRate" : 3.0,
+      "particles" : [
+        {
+          "particle" : {
+            "type" : "animated",
+            "animation" : "/animations/numerals/numerals1.animation",
+            "size" : 0.5,
+            "timeToLive" : 0.5,
+            "initialVelocity" : [1, 1],
+            "finalVelocity" : [0, 2],
+            "approach" : [0, 10],
+            "destructionAction": "fade",
+            "destructionTime": 0.5,
+            "fade": 0.2
+          }
+        },
+        {
+          "particle" : {
+            "type" : "animated",
+            "animation" : "/animations/numerals/numerals2.animation",
+            "size" : 0.5,  
+            "timeToLive" : 0.5,
+            "initialVelocity" : [-1, 0.5],
+            "finalVelocity" : [0, 1],
+            "approach" : [0, 10],
+            "destructionAction": "fade",
+            "destructionTime": 0.5,
+            "fade": 0.2
+          }
+        }
+      ]
+    }
+  }
+}
