@@ -192,7 +192,7 @@
 				"lblIsAutomatic": {
 					"type": "label",
 					"position": [90, 190],
-					"value": "Авт.",
+					"value": "Мех.",
 					"color": "gray"
 				},
 
