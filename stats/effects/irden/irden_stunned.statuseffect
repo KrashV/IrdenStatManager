@@ -5,7 +5,10 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_stunned.lua"
   ],
+
+  "animationConfig": "irden_stunned.animation",
 
   "label" : "Ошеломление",
   "icon" : "/interface/statuses/irden_brain.png"

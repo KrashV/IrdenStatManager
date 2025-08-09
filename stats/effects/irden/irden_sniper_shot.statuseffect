@@ -5,8 +5,11 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_sniper_shot.lua"
   ],
 
+    "animationConfig": "irden_sniper_shot.animation",
+
   "label" : "Прицельный выстрел противника",
-  "icon" : "/interface/statuses/irden_shot.png"
+  "icon" : "/interface/statuses/irden_sniper_shot.png"
 }

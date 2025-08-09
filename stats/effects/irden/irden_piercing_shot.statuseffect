@@ -5,8 +5,11 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_piercing_shot.lua"
   ],
 
+  "animationConfig": "irden_piercing_shot.animation",
+
   "label" : "Бывший пробивной выстрел",
-  "icon" : "/interface/statuses/irden_shot.png"
+  "icon" : "/interface/statuses/irden_piercing_shot.png"
 }

@@ -1,0 +1,65 @@
+{
+  "particleEmitters" : {
+    "electro" : {
+      "enabled" : true,
+      "emissionRate" : 5.0,
+      "particles" : [
+        {
+          "particle": {
+            "type": "animated",
+            "animation": "/animations/teslabolt/teslabolt.animation",
+            "timeTolive": 3,
+            "destructionTime": 1,
+            "destructionAction": "shrink",
+            "size": 0.5,
+            "fullbirght": true,
+            "angularVelocity": 180,
+            "light": [100, 200, 250],
+            "fade": 0.7
+          }
+        },
+        {
+          "particle":{
+            "type": "ember",
+            "size": 1,
+            "color": [67, 175, 245, 255],
+            "timeTolive": 2,
+            "destructionAction": "shrink",
+            "destructionTime": 0.5,
+            "aproach": [1, 5],
+            "initialVelocity": [5, 5],
+            "angularVelocity": 45,
+            "finalVelocity": [5, 5],
+            "variance" : {
+              "initialVelocity" : [-5, -5],
+              "finalVelocity": [-5, -5],
+              "size" : 0.5
+            }
+          }
+        },
+        {
+          "particle":{
+            "type": "ember",
+            "size": 1,
+            "color": [67, 175, 245, 255],
+            "timeTolive": 2,
+            "destructionAction": "shrink",
+            "destructionTime": 0.5,
+            "aproach": [-1, -5],
+            "initialVelocity": [-5, 5],
+            "angularVelocity": -45,
+            "finalVelocity": [-5, 5],
+            "variance" : {
+              "initialVelocity" : [5, -5],
+              "finalVelocity": [5, -5],
+              "size" : 0.5
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sounds" : {
+    "spark" : [ "/sfx/projectiles/electricstickyspikes_loop.ogg" ]
+  }
+}

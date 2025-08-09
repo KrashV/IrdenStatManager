@@ -1,0 +1,32 @@
+{
+  "particleEmitters" : {
+    "dodge" : {
+      "enabled" : true,
+      "emissionRate" : 1.0,
+      "particles" : [
+        {
+          "particle" : {
+            "type" : "textured",
+            "image": "/particles/feathers/feather.png?multiply=FFFFFF80",
+            "size" : 0.3,
+            "fade" : 0.3,
+            "destructionAction" : "fade",
+            "destructionTime" : 1.8,
+            "position" : [0.0, 0.0],
+            "offsetRegion" : [0, 0, 0, 0],
+            "initialVelocity" : [0.1, -0.3],
+            "finalVelocity" : [0.6, -0.9],
+            "approach" : [0, 0],
+            "angularVelocity": 95,
+            "timeToLive" : 2.6,
+            "variance" : {
+              "initialVelocity" : [1, -0.2],
+              "finalVelocity" : [2, -0.3],
+              "size" : 0.1
+            }
+          }
+        }
+      ]
+    }
+  }
+}

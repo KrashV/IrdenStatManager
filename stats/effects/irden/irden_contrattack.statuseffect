@@ -5,8 +5,11 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_contrattack.lua"
   ],
 
+  "animationConfig": "irden_contrattack.animation",
+
   "label" : "Возвращение",
-  "icon" : "/interface/statuses/thorns.png"
+  "icon" : "/interface/statuses/irden_contrattack.png"
 }

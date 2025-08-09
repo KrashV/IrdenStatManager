@@ -1,0 +1,28 @@
+{
+  "particleEmitters" : {
+    "mot" : {
+      "enabled" : true,
+      "emissionRate" : 5.0,
+      "particles" : [
+        {
+          "particle" : {
+            "type" : "textured",
+            "image": "/interface/statuses/jumpboost.png?scalenearrest=0.5?hueshift=180",
+            "size" : 0.2,
+            "fade" : 0.1,
+            "destructionAction" : "fade",
+            "destructionTime" : 0.3,
+            "position" : [0.0, 0.0],
+            "offsetRegion" : [0, 0, 0, 0],
+            "initialVelocity" : [0, 0.5],
+            "finalVelocity" : [0, 1],
+            "approach" : [0, 0],
+            "angularVelocity": 0,
+            "layer": "front",
+            "timeToLive" : 0.4
+          }
+        }
+      ]
+    }
+  }
+}

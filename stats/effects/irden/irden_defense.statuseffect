@@ -5,8 +5,11 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+    "irden_defense.lua"
   ],
 
+  "animationConfig": "irden_defense.animation",
+
   "label" : "Глухая оборона",
-  "icon" : "/interface/statuses/defense.png"
+  "icon" : "/interface/statuses/irden_defense.png"
 }

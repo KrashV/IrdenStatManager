@@ -1,0 +1,27 @@
+{
+  "particleEmitters" : {
+    "stun" : {
+      "enabled" : true,
+      "emissionRate" : 0.5,
+      "particles" : [
+        {
+          "particle" : {
+            "type" : "animated",
+            "animation" : "/animations/emotes/sad.animation",
+            "size" : 0.5,
+            "position" : [-0.3, 2],
+            "initialVelocity" : [-0.1, 1],
+            "finalVelocity" : [-0.2, 2],
+            "approach" : [0, 5],
+            "destructioTime": 0.9,
+            "destructionAction": "shrink",
+            "timeToLive" : 0.9,
+            "variance": {
+                "position": [0.3, 0]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

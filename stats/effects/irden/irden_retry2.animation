@@ -1,0 +1,52 @@
+{
+  "particleEmitters" : {
+    "retry2" : {
+      "enabled" : true,
+      "emissionRate" : 4.0,
+      "particles" : [
+        {
+          "particle" : {
+            "type" : "ember",
+            "size" : 0.8,
+            "color" : [80, 221, 254, 230],
+            "fade" : 0.8,
+            "destructionAction" : "shrink",
+            "destructionTime" : 1.8,
+            "position" : [0.0, 0.0],
+            "offsetRegion" : [0, 0, 0, 0],
+            "initialVelocity" : [1, -5.0],
+            "finalVelocity" : [2, -10],
+            "approach" : [0, 10],
+            "timeToLive" : 8.6,
+            "variance" : {
+              "initialVelocity" : [0.5, 0],
+              "finalVelocity" : [0.8, 0],
+              "size" : 0.5
+            }
+          }
+        },
+        {
+            "particle" : {
+              "type" : "ember",
+              "size" : 0.8,
+              "color" : [80, 221, 254, 230],
+              "fade" : 0.8,
+              "destructionAction" : "shrink",
+              "destructionTime" : 1.8,
+              "position" : [0.0, 0.0],
+              "offsetRegion" : [0, 0, 0, 0],
+              "initialVelocity" : [-1, -5.0],
+              "finalVelocity" : [-2, -10],
+              "approach" : [0, 10],
+              "timeToLive" : 8.6,
+              "variance" : {
+                "initialVelocity" : [-0.5, 0],
+                "finalVelocity" : [-0.8, 0],
+                "size" : 0.5
+              }
+            }
+          }
+      ]
+    }
+  }
+}

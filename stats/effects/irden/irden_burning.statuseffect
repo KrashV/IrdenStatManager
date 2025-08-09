@@ -5,7 +5,10 @@
   "defaultDuration" : 5,
 
   "scripts" : [
+     "irden_burning.lua"
   ],
+
+  "animationConfig": "irden_burning.animation",
 
   "label" : "Горение",
   "icon" : "/interface/statuses/fire.png"
