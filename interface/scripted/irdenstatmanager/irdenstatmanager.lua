@@ -141,7 +141,7 @@ end
 
 function loadPreview()
 	widget.setText("lytCharacter.lblName", world.entityName(player.id()))
-  widget.setText("lytCharacter.tbxFightName", self.irden.fightName or "")
+    widget.setText("lytCharacter.tbxFightName", self.irden.fightName or (player.hasActiveQuest("irdeninitiative") and player.getProperty("irdenfightName")) or "")
   widget.setChecked("lytCharacter.btnHideStats", self.irden.onlySum)
   
   widget.setSelectedOption("lytCharacter.lytRollModes.rgRollModes", self.irden.rollMode)
