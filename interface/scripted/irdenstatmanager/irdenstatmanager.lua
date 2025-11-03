@@ -27,7 +27,7 @@ function init()
 
   self.irden = irdenUtils.loadIrden()
 
-  self.version = config.getParameter("version")
+  self.version = root.assetSourceMetadata(root.assetOrigin("/interface/scripted/irdenstatmanager/irdenstatmanager.lua")).version
   self.defaultTitle = string.format("%s v%s", config.getParameter("gui").windowtitle.title, self.version)
   self.defaultSubtitle = config.getParameter("gui").windowtitle.subtitle
   pane.setTitle(self.defaultTitle, self.defaultSubtitle)

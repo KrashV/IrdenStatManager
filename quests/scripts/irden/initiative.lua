@@ -28,7 +28,7 @@ end
 
 function questStart()
   promises:add(world.findUniqueEntity("irdenfighthandler_" .. self.fightName), function(pos)
-    world.sendEntityMessage("irdenfighthandler_" .. self.fightName, "addPlayerToFight", player.id(), self.questParams["initiative"], self.questParams["asEnemy"])
+    world.sendEntityMessage("irdenfighthandler_" .. self.fightName, "addPlayerToFight", player.id(), self.questParams["initiative"], self.questParams["asEnemy"], self.questParams["asSpectator"])
   end, function(error)
     local stagehandId = world.spawnStagehand(world.entityPosition(player.id()), "irdenhandler", 
       {name = self.fightName, author = player.id(), initiative = self.questParams["initiative"] })
