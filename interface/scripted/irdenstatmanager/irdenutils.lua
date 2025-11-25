@@ -129,7 +129,13 @@ function irdenUtils.getActiveBonusesByTags(tags)
     local groupType = self.irden.bonusGroups[groupName].type
     for _, bonus in ipairs(group.bonuses) do
       for _, tag in ipairs(tags) do 
-        if bonus.tag == tag and (bonus.ready or groupType == "actions" or groupType == "stuff") and bonus.value ~= 0 then
+        if bonus.tag == tag and (bonus.ready or groupType == "actions" or groupType == "stuff") and bonus.value ~= 0 and (
+          not bonus.fightingType
+          or bonus.fightingType == "BOTH"
+          or (
+              bonus.fightingType == "FIGHT" and player.hasActiveQuest("irdeninitiative")
+              or bonus.fightingType == "PEACE" and not player.hasActiveQuest("irdeninitiative")
+          )) then
           table.insert(activeBonuses, bonus)
         end
       end

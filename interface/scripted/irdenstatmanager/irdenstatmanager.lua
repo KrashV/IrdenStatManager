@@ -473,6 +473,11 @@ function loadBonuses(bonusName)
               name = bonus.name
             })
             widget.setChecked("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusIsActive", bonus.ready)
+            widget.setImage("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".imgBonusType", bonus.fightingType and (
+              bonus.fightingType == "FIGHT" and "/interface/scripted/irdenstatmanager/staticons/bonustypes/fightsmall.png" or
+              bonus.fightingType == "PEACE" and "/interface/scripted/irdenstatmanager/staticons/bonustypes/peacesmall.png" or 
+              ""
+            ) or "")
             handleBonusStatus(bonus, bonus.ready)
             self.irden.bonusGroups[groupName].bonuses[j].listId = li
 
@@ -656,6 +661,7 @@ function addBonus()
     bonus.oneTimed = not widget.getChecked("lytMisc.lytAddNewSkill.cbxIsPermanent")
     bonus.ready = true
     bonus.tag = widget.getSelectedData("lytMisc.lytAddNewSkill.rgBonusTags").tag
+    bonus.fightingType = widget.getSelectedData("lytMisc.lytAddNewSkill.rgBonusFightTypes").type
 
     if findIndexAtValue(self.irden.bonusGroups[self.currentGroup].bonuses, "name", bonus.name) then
       irdenUtils.alert("^red;Бонус %s в этой группе уже существует!^reset;")
@@ -1185,7 +1191,16 @@ function getBonuses (dataTags, ...)
   for groupName, group in pairs(self.irden.bonusGroups) do
     for i, bonus in ipairs(group.bonuses) do
       local bonusType = group.isCustom and "lytCustomBonuses" or "lytBaseBonuses"
-      if bonus.ready and has_value(dataTags, bonus.tag) then
+      if bonus.ready 
+        and has_value(dataTags, bonus.tag) 
+        and (
+          not bonus.fightingType
+          or bonus.fightingType == "BOTH"
+          or (
+              bonus.fightingType == "FIGHT" and player.hasActiveQuest("irdeninitiative")
+              or bonus.fightingType == "PEACE" and not player.hasActiveQuest("irdeninitiative")
+          ))
+      then
         if bonus.value ~= 0 then
           table.insert(bonuses, bonus.value)
           table.insert(bonuses, bonus.name)
