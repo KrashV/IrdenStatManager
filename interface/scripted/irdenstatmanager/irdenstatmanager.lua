@@ -664,7 +664,7 @@ function addBonus()
     bonus.fightingType = widget.getSelectedData("lytMisc.lytAddNewSkill.rgBonusFightTypes").type
 
     if findIndexAtValue(self.irden.bonusGroups[self.currentGroup].bonuses, "name", bonus.name) then
-      irdenUtils.alert("^red;Бонус %s в этой группе уже существует!^reset;")
+      irdenUtils.alert(string.format("^red;Бонус %s в этой группе уже существует!^reset;", bonus.name))
       return
     end
 
@@ -750,6 +750,7 @@ function roll20(_, dice)
   sendMessageToServer("statmanager", {
     type = "diceroll", 
     dice = tonumber(widget.getText("lytCharacter.tbxStatRollany")) or 0,
+    action = description ~= "" and description,
     source = world.entityName(player.id())
   })
 end
