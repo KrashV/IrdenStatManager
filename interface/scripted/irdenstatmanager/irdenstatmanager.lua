@@ -1474,7 +1474,7 @@ function sendMessageToServer(message, data)
 
   if data.rollMode == "Local" then
     if root.getConfiguration then 
-      local radius = root.getConfiguration("icc_proximity_radius") or 100
+      local radius = root.getConfiguration("scc_proximity_radius") or 100
       local clientIds = {}
       for _, pId in ipairs(world.playerQuery(world.entityPosition(player.id()), radius)) do 
         table.insert(clientIds, pId // -65536)
