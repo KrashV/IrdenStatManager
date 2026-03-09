@@ -1530,7 +1530,7 @@ function cursorOverride(screenPosition)
           local wPos = widget.getPosition(w)
   
           if tooltip.craftBar then
-            local text = tooltip.craftBar.type .. ": " .. self.irden.crafts[tooltip.craftBar.type] .. " / " .. irdenUtils.getMaxStamina(tooltip.craftBar.type)
+            local text = tooltip.craftBar.description .. ": " .. self.irden.crafts[tooltip.craftBar.type] .. " / " .. irdenUtils.getMaxStamina(tooltip.craftBar.type)
 
             self.tooltipCanvas:drawText(text, {
               position = vec2.add(wPos, vec2.div(widget.getSize(w), 2)),
