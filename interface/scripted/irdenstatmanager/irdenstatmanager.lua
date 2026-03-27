@@ -455,7 +455,7 @@ function loadBonuses(bonusName)
 
       if not group.hidden or bonusName and bonusName ~= "" then
         for j, bonus in ipairs(group.bonuses) do
-          if not bonusName or bonusName == "" or string.find(bonus.name, bonusName) then
+          if not bonusName or bonusName == "" or string.find(utf8.lower(bonus.name), bonusName) then
             local li = widget.addListItem("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses")
             widget.setText("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", bonus.name)
             widget.setData("lytMisc.lytBonuses." .. bonusType .. ".saBonuses.listBonuses." .. li .. ".bonusName", bonus.name)
@@ -819,12 +819,9 @@ function lineSelected(listName)
   self.selectedLine = widget.getListSelected("lytMisc.lytBonuses." .. selectedTab .. ".saBonuses." .. listName)
 end
 
-function string.uupper ( str ) return str:gsub ( "([a-zа-яё])", function ( c ) return string.char ( string.byte ( c ) - ( c == 'ё' and 16 or 32 ) ) end ) end
-function string.llower ( str ) return str:gsub ( "([A-ZА-ЯЁ])", function ( c ) return string.char ( string.byte ( c ) + ( c == 'ё' and 16 or 32 ) ) end ) end
-
 function searchBonus(txBox, text)
   local search = widget.getText("lytMisc.lytBonuses.tbxSearch")
-  loadBonuses(search)
+  loadBonuses(utf8.lower(search))
 end
 
 
