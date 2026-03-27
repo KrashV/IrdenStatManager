@@ -716,7 +716,7 @@ function setRollMode(wid, data)
 end
 
 function changeRollMode()
-  widget.setOptionEnabled("lytCharacter.lytRollModes.rgRollModes", 4, player.hasActiveQuest("irdeninitiative"))
+  widget.setOptionEnabled("lytCharacter.lytRollModes.rgRollModes", 2, player.hasActiveQuest("irdeninitiative"))
   widget.setOptionEnabled("lytCharacter.lytRollModes.rgRollModes", 3, #player.teamMembers() > 0)
 
   widget.setVisible("lytCharacter.lytRollModes", not widget.active("lytCharacter.lytRollModes"))
