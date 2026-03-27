@@ -1,0 +1,15 @@
+{
+  "name" : "irden_sleep",
+
+  "effectConfig" : {},
+  "defaultDuration" : 5,
+
+  "scripts" : [
+    "irden_sleep.lua"
+  ],
+
+  "animationConfig": "irden_sleep.animation",
+
+  "label" : "Сон",
+  "icon" : "/interface/statuses/sleep.png"
+}
