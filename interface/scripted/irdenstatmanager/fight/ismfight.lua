@@ -86,6 +86,13 @@ function leaveFight()
   widget.setText("lytCharacter.tbxFightName", "")
   self.irden.fightName = nil
   world.sendEntityMessage(player.id(), "leaveFight")
+
+  -- Drop the roll mode to default
+
+  if self.irden.rollMode == 2 then
+    self.irden.rollMode = 1
+    widget.setSelectedOption("lytCharacter.lytRollModes.rgRollModes", self.irden.rollMode)
+  end
 end
 
 function clearFight()
