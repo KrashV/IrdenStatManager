@@ -1498,7 +1498,7 @@ end
 function update(dt)
 	printTime()
   --drawCharacter()
-  animatedWidgets:update()
+  animatedWidgets:update(dt)
   promises:update()
   timers:update(dt)
 end
