@@ -723,7 +723,7 @@ function changeRollMode()
 end
 
 function changeHp()
-  local maxHp = 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") + irdenUtils.addBonusToStat(0, "MAX_HEALTH")
+  local maxHp = 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") * 2+ irdenUtils.addBonusToStat(0, "MAX_HEALTH")
   local oldHP = (self.irden.currentHp or 0) / maxHp
 
   self.irden.currentHp = tonumber(widget.getText("lytCharacter.tbxCurrentHp")) or 0
@@ -743,7 +743,7 @@ end
 
 function restoreHp()
   widget.setButtonImage("lytCharacter.btnStatHp", "/interface/scripted/irdenstatmanager/staticons/end.png")
-  widget.setText("lytCharacter.tbxCurrentHp", 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") + irdenUtils.addBonusToStat(0, "MAX_HEALTH"))
+  widget.setText("lytCharacter.tbxCurrentHp", 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") * 2 + irdenUtils.addBonusToStat(0, "MAX_HEALTH"))
 end
 
 function roll20(_, dice)
@@ -1240,7 +1240,7 @@ function subtractHP(value, kind)
     if kind ~= "HEAL" then
       widget.setText("lytCharacter.tbxCurrentHp", math.max(0, currhp - subhp))
     else
-      local maxHp = 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") + irdenUtils.addBonusToStat(0, "MAX_HEALTH")
+      local maxHp = 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") * 2 + irdenUtils.addBonusToStat(0, "MAX_HEALTH")
       widget.setText("lytCharacter.tbxCurrentHp", math.min(maxHp, currhp + subhp))
     end
   end
@@ -1256,7 +1256,7 @@ function editHP(textbox, kind)
 end
 
 function setHealthAndArmor()
-  local maxHp = 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") + irdenUtils.addBonusToStat(0, "MAX_HEALTH")
+  local maxHp = 20 + irdenUtils.addBonusToStat(self.irden["stats"]["endurance"], "END") * 2 + irdenUtils.addBonusToStat(0, "MAX_HEALTH")
   self.irden.currentHp = math.min(self.irden.currentHp, maxHp)
   widget.setText("lytCharacter.tbxCurrentHp", self.irden.currentHp)
   widget.setText("lytCharacter.lblMaxHP", string.format("HP:       / %s", maxHp))
