@@ -1,7 +1,13 @@
 name: Generate Archive and Create Release
 
 on:
-  push:
+    push:
+        branches:
+        - main
+        paths:
+        - '_metadata'
+        - 'CHANGELOG.txt'
+        - '.github/workflows/build.yml'
 
 jobs:
   build:
