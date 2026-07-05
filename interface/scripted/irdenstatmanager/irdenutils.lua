@@ -96,11 +96,11 @@ function irdenUtils.getMaxStamina(type, irden)
   end
 end
 
-function irdenUtils.addBonusToStat(base, stat, irden)
+function irdenUtils.addBonusToStat(base, stat, irden, forDamage)
   local ird = irden or self.irden
   for groupName, bonusGroup in pairs(ird.bonusGroups) do
     for _, bonus in ipairs(bonusGroup.bonuses) do
-      if bonus.tag == stat and bonus.ready then
+      if bonus.tag == stat and bonus.ready and not (forDamage and bonus.affectsDamage == false) then
         base = base + bonus.value
       end
     end
