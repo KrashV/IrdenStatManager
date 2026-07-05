@@ -834,7 +834,7 @@ function attack(btnName, data)
   local attackBonus = irdenUtils.getBonusByTag(data.attackBonus)
   local damageBonus = irdenUtils.getBonusByTag(data.damageBonus)
 
-  local baseDamageBonus = math.max((irdenUtils.addBonusToStat(baseAttackBonus, data.stat) + irdenUtils.addBonusToStat(self.irden.stats[self.characterStats[data.dmgStat]] or 0, data.dmgStat)) // data.dmgDivider, 1)
+  local baseDamageBonus = math.max((irdenUtils.addBonusToStat(baseAttackBonus, data.stat, nil, true) + irdenUtils.addBonusToStat(self.irden.stats[self.characterStats[data.dmgStat]] or 0, data.dmgStat, nil, true)) // data.dmgDivider, 1)
   local weaponDamageBonus = data.type == "other" and {value = 0, name = 'Атака'} or irdenUtils.getBonusByTag(widget.getData("lytArmory.rg" .. data.type .. "Weapons." .. self.irden["gear"]["weapon"][data.type]).damageBonus)
   local shieldDamageBonus = irdenUtils.getBonusByTag(widget.getData("lytArmory.rgShields." .. self.irden["gear"]["armour"]["shield"]).damageBonus)
 

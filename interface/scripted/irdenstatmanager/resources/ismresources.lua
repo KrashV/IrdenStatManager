@@ -50,7 +50,7 @@ function loadResources()
       mouseTransparent = true
     })
 
-    
+
 
     -- Slider
     widget.addChild("lytResources.lytButtons", {
@@ -70,7 +70,7 @@ function loadResources()
       value = "???",
       position = vec2.add(position, sliderAttemptsOffset),
       mouseTransparent = true
-    }, "lblCurrent" .. event.event)    
+    }, "lblCurrent" .. event.event)
 
 
     -- Left attempts
@@ -111,23 +111,55 @@ function perfectAttempts(stat)
   return  1 + (irdenUtils.addBonusToStat(self.irden["stats"][self.characterStats[stat]], stat) + 1) // 2
 end
 
-function getMaxResourceAttempts(type)
-  local attempts = {
-    prey = 2 + irdenUtils.getBonusByTag("RESOURSE_HUNTING").value,
-    fishing = 2 + irdenUtils.getBonusByTag("RESOURSE_FISHING").value,
-    herbalism = irdenUtils.addBonusToStat(self.irden["stats"][self.characterStats[self.eventStats["herbalism"]]], self.eventStats["herbalism"]) // 5 + irdenUtils.getBonusByTag("RESOURSE_HERBALISM").value,
-    mining = perfectAttempts("END") // 2 + irdenUtils.getBonusByTag("RESOURSE_MINING").value,
-    quarry = perfectAttempts("END") + irdenUtils.getBonusByTag("RESOURSE_QUARRY").value,
-    chopping = perfectAttempts("END") // 2 + irdenUtils.getBonusByTag("RESOURSE_CHOPPING").value,
-    riches = irdenUtils.addBonusToStat(self.irden["stats"][self.characterStats[self.eventStats["riches"]]], self.eventStats["riches"]) // 5 + irdenUtils.getBonusByTag("RESOURSE_RICHES").value,
-    wooddoing = perfectAttempts("END") + irdenUtils.getBonusByTag("RESOURSE_WOODDOING").value
-  }
+function getResourceEvent(eventName)
+    if not self.eventsByName then
+        self.eventsByName = {}
+        for _, ev in ipairs(root.assetJson("/irden_events.config")) do
+            self.eventsByName[ev.event] = ev
+        end
+    end
+    return self.eventsByName[eventName]
+end
 
-  return attempts[type] or "?"
+function getGroupPoolMax(group)
+    if group == "miningPool" then
+        return perfectAttempts("END")
+                + irdenUtils.getBonusByTag("RESOURSE_QUARRY").value
+                + 2 * irdenUtils.getBonusByTag("RESOURSE_MINING").value
+    elseif group == "huntingPool" then
+        return 2
+                + irdenUtils.getBonusByTag("RESOURSE_HUNTING").value
+                + irdenUtils.getBonusByTag("RESOURSE_FISHING").value
+    end
+    return 0
+end
+
+function getMaxResourceAttempts(type)
+    local event = getResourceEvent(type)
+    if event and event.attemptGroup then
+        return getGroupPoolMax(event.attemptGroup) // (event.attemptCost or 1)
+    end
+
+    local attempts = {
+        herbalism = irdenUtils.addBonusToStat(self.irden["stats"][self.characterStats[self.eventStats["herbalism"]]], self.eventStats["herbalism"]) // 5 + irdenUtils.getBonusByTag("RESOURSE_HERBALISM").value,
+        chopping = perfectAttempts("END") // 2 + irdenUtils.getBonusByTag("RESOURSE_CHOPPING").value,
+        riches = irdenUtils.addBonusToStat(self.irden["stats"][self.characterStats[self.eventStats["riches"]]], self.eventStats["riches"]) // 5 + irdenUtils.getBonusByTag("RESOURSE_RICHES").value,
+        wooddoing = perfectAttempts("END") + irdenUtils.getBonusByTag("RESOURSE_WOODDOING").value
+    }
+
+    return attempts[type] or "?"
 end
 
 function getLeftResourceAttempts(type)
-  return (self.irden.eventAttempts and self.irden.eventAttempts[type] and self.irden.eventAttempts[type]) or getMaxResourceAttempts(type)
+    local event = getResourceEvent(type)
+    if event and event.attemptGroup then
+        local pool = self.irden.eventAttempts and self.irden.eventAttempts[event.attemptGroup]
+        if not pool then
+            pool = getGroupPoolMax(event.attemptGroup)
+        end
+        return pool // (event.attemptCost or 1)
+    end
+    return (self.irden.eventAttempts and self.irden.eventAttempts[type] and self.irden.eventAttempts[type]) or getMaxResourceAttempts(type)
 end
 
 function setResourseAttempts()
@@ -135,7 +167,7 @@ function setResourseAttempts()
     widget.setSliderRange("lytResources.lytButtons.slResource" .. event.event, 0, getLeftResourceAttempts(event.event), 1)
     widget.setSliderValue("lytResources.lytButtons.slResource" .. event.event, getLeftResourceAttempts(event.event))
 
-    
+
     widget.setText("lytResources.lytButtons.lblTotal" .. event.event, getMaxResourceAttempts(event.event))
     widget.setText("lytResources.lytButtons.lblLeft" .. event.event, getLeftResourceAttempts(event.event))
     widget.setText("lytResources.lytButtons.lblCurrent" .. event.event, widget.getSliderValue("lytResources.lytButtons.slResource" .. event.event))
@@ -150,18 +182,25 @@ end
 function resources(_, data)
   local type = data.type
 
-  local function decreaseLeftAttempts(type, n_attempts)
-    self.irden.eventAttempts = self.irden.eventAttempts or {}
-    self.irden.eventAttempts[type] = self.irden.eventAttempts[type] or getMaxResourceAttempts(type)
-    self.irden.eventAttempts[type] = math.max(self.irden.eventAttempts[type] - n_attempts, 0)
-  end
+    local function decreaseLeftAttempts(eventName, n_attempts)
+        self.irden.eventAttempts = self.irden.eventAttempts or {}
+        local event = getResourceEvent(eventName)
+        if event and event.attemptGroup then
+            local key = event.attemptGroup
+            local pool = self.irden.eventAttempts[key] or getGroupPoolMax(key)
+            self.irden.eventAttempts[key] = math.max(pool - n_attempts * (event.attemptCost or 1), 0)
+        else
+            self.irden.eventAttempts[eventName] = self.irden.eventAttempts[eventName] or getMaxResourceAttempts(eventName)
+            self.irden.eventAttempts[eventName] = math.max(self.irden.eventAttempts[eventName] - n_attempts, 0)
+        end
+    end
 
   if not self.editMode then
     local n_attempts = widget.getSliderValue("lytResources.lytButtons.slResource" .. data.event)
     n_attempts = n_attempts > 0 and n_attempts or 1
 
     sendMessageToServer("statmanager", {
-      type = "resourceEvent", 
+      type = "resourceEvent",
       action = data.action,
       source = world.entityName(player.id()),
       minCrit = self.irden.overrides.events[data.event] and self.irden.overrides.events[data.event].minCrit,
@@ -171,7 +210,7 @@ function resources(_, data)
     })
     decreaseLeftAttempts(data.event, n_attempts)
   elseif not widget.active("lytEditResource") then
-    for i, stat in ipairs({"STR", "END", "PER", "REF", "MAG", "WIL", "INT", "DET"}) do 
+    for i, stat in ipairs({"STR", "END", "PER", "REF", "MAG", "WIL", "INT", "DET"}) do
       if stat == data.stat then
         widget.setSelectedOption("lytEditResource.rgStat", i - 2)
         break
