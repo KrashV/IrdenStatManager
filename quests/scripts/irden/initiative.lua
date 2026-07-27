@@ -1,191 +1,216 @@
-require("/quests/scripts/portraits.lua")
-require("/quests/scripts/questutil.lua")
+require "/quests/scripts/portraits.lua"
+require "/quests/scripts/questutil.lua"
 require "/scripts/messageutil.lua"
 
-local ENTITY_COLOR = {
-    ["PLAYER"] = "^white;%s^reset;",
-    ["MONSTER"] = "^red;%s^reset;",
-    ["SPECTATOR"] = "^cyan;%s^reset;"
+local SERVER_ENTITY = "server"
+local CURRENT_TURN_PARAMETER = "currentTurnUuid"
+
+local MESSAGE = {
+    CHECK = "irden:fight:check",
+    LEAVE = "irden:fight:leave",
+    NEXT_TURN = "irden:fight:turn:next",
+    UPDATE = "irden:fight:update"
 }
 
-function init()
-    self.questParams = quest.questDescriptor()["parameters"]["fight"]["data"]
-    self.fightName = self.questParams["fightName"]
-    self.snapshotVersion = nil
-
-    message.setHandler("irden:fight:leave", handleLeaveFight)
-
-    message.setHandler("irden:fight:turn:next", simpleHandler(function()
-        handleNextTurn()
-    end))
-
-    message.setHandler("irden:fight:update", simpleHandler(ensureFight))
-
-    fightBlank()
-end
-
+local ENTITY_COLOR = {
+    PLAYER = "^white;%s^reset;",
+    MONSTER = "^red;%s^reset;",
+    SPECTATOR = "^cyan;%s^reset;"
+}
 
 ---@class FightData
 ---@field authorUuid string
 ---@field fightName string
----@field queue table<string> - uuids in list (keys already sorted by initiative)
----@field playersInFight table<string, FightData.PlayersInFight>
----@field turn number - current turn number
+---@field queue string[] UUID в порядке инициативы
+---@field playersInFight table<string, PlayerInFight>
+---@field turn number Номер текущего хода
 ---@field currentPlayerUuidTurn string
----@field snapshotVersion string -- для слабых компуктеров чтоб не пересчитывать всё по новой
+---@field snapshotVersion string Версия снапшота для слабых куомпуктеров
 
----@class FightData.PlayersInFight
----@field name string - player name
----@field uuid string - player uuid
----@field entityType string - one of PLAYER, MONSTER, SPECTATOR
----@field initiative number - initiative, sorting by this
+---@class PlayerInFight
+---@field name string
+---@field uuid string
+---@field entityType "PLAYER"|"MONSTER"|"SPECTATOR"
+---@field initiative number
 
-function fightBlank()
-    quest.setIndicators({})
-    quest.setObjectiveList(
-            {
-                {
-                    ("Бой: ^yellow;%s^reset;"):format(self.fightName), false
-                },
-                {
-                    "Ожидайте обновления боя", false
-                }
-            }
-    )
-
+local function queueMessage(message)
+    if message ~= nil and message ~= "" then
+        interface.queueMessage(tostring(message))
+    end
 end
 
----@param data FightData
-function ensureFight(data)
-    local playersInFight = data.playersInFight
-    if self.snapshotVersion == data.snapshotVersion then
-        return
-    else
-        self.snapshotVersion = data.snapshotVersion
+local function completeQuest(message)
+    queueMessage(message)
+    quest.complete()
+end
+
+local function sendFightMessage(messageName, onSuccess, onError)
+    promises:add(
+            world.sendEntityMessage(SERVER_ENTITY, messageName, self.fightName),
+            onSuccess,
+            onError
+    )
+end
+
+local function colorPlayerName(playerInFight)
+    local colorTemplate = ENTITY_COLOR[playerInFight and playerInFight.entityType] or ENTITY_COLOR.PLAYER
+    local name = playerInFight and playerInFight.name or "Неизвестно"
+    return colorTemplate:format(name)
+end
+
+local function findCurrentPlayerIndex(queue, currentPlayerUuid)
+    if not currentPlayerUuid then
+        return nil
     end
-    quest.setParameter("currentTurnUuid", { type = "entity", uniqueId = data.currentPlayerUuidTurn })
-    quest.setIndicators({ "currentTurnUuid" })
+
+    for index, uuid in ipairs(queue) do
+        if uuid == currentPlayerUuid then
+            return index
+        end
+    end
+
+    return nil
+end
+
+local function createObjectiveList(data, queue, playersInFight, currentPlayerIndex)
+    local currentPlayer = playersInFight[data.currentPlayerUuidTurn]
 
     local objectiveList = {
         {
-            ("^white;Бой:^reset; ^yellow;%s^reset;"):format(self.fightName), true
+            ("^white;Бой:^reset; ^yellow;%s^reset;"):format(self.fightName),
+            true
         },
         {
-            ("^white;Текущий ход:^reset; ^green;%s^reset;"):format(data.turn), true
+            ("^white;Текущий ход:^reset; ^green;%s^reset;"):format(data.turn or "Неизвестно"),
+            true
         },
         {
-            ("^white;Ход:^reset; %s"):format(
-                    colorPlayerNameByEntityType(playersInFight[data.currentPlayerUuidTurn].name,
-                            playersInFight[data.currentPlayerUuidTurn].entityType)
-            ), true
+            ("^white;Ход:^reset; %s"):format(colorPlayerName(currentPlayer)),
+            true
         },
         {
-            "^white;Очередь:^reset;", true
+            "^white;Очередь:^reset;",
+            true
         }
     }
-    local queueState = true
-    local currentPlayerTurnNumber = 0
-    for i, uuid in ipairs(data.queue) do
-        local p = playersInFight[uuid]
-        queueState = uuid ~= data.currentPlayerUuidTurn
-        if currentPlayerTurnNumber == 0 then
-            -- Нашли текущего, помечаем как false
-            currentPlayerTurnNumber = queueState and 0 or i
-        else
-            queueState = false
+
+    for index, uuid in ipairs(queue) do
+        local fighter = playersInFight[uuid]
+
+        if fighter then
+            local marker = index == currentPlayerIndex and "^yellow;>^reset;" or ""
+            local completed = currentPlayerIndex ~= nil and index < currentPlayerIndex
+
+            table.insert(objectiveList, {
+                ("%s  %s (%s)"):format(
+                        marker,
+                        fighter.name or "Неизвестно",
+                        fighter.initiative or 0
+                ),
+                completed
+            })
         end
-
-        table.insert(objectiveList,
-                {
-                    ("%s  %s (%s)"):format(currentPlayerTurnNumber == i and "^yellow;>^reset;" or "", p.name, p.initiative), queueState
-                })
     end
-    quest.setObjectiveList(objectiveList)
 
-    local progressMod = 1 / #data.queue
-    local currentProgress = 1 - (currentPlayerTurnNumber * progressMod)
-    quest.setProgress(currentProgress)
+    return objectiveList
 end
 
-function colorPlayerNameByEntityType(name, entityType)
-    local code = ENTITY_COLOR[entityType]
-    return code:format(name)
+local function updateProgress(queueSize, currentPlayerIndex)
+    if queueSize == 0 or currentPlayerIndex == nil then
+        quest.setProgress(0)
+        return
+    end
+
+    quest.setProgress(1 - currentPlayerIndex / queueSize)
 end
 
-function update(dt)
-    promises:update()
+local function showWaitingState()
+    quest.setIndicators({})
+    quest.setObjectiveList({
+        {
+            ("Бой: ^yellow;%s^reset;\n- Ожидайте обновления боя"):format(self.fightName),
+            false
+        }
+    })
 end
 
-function handleNextTurn()
-    promises:add(world.sendEntityMessage("server", "irden:fight:turn:next", self.fightName),
-            function(message)
-                interface.queueMessage(message)
-            end, function(error)
-                interface.queueMessage(error)
-                quest.complete()
-            end
-    )
-end
-function handleLeaveFight(_, isLocal)
-    if (isLocal) then
-        promises:add(world.sendEntityMessage("server", "irden:fight:leave", self.fightName),
-                function(result)
-                    interface.queueMessage(result)
-                    quest.complete()
-                end,
-                function(error)
-                    interface.queueMessage(error)
+local function checkFightExists()
+    sendFightMessage(
+            MESSAGE.CHECK,
+            function(exists)
+                if not exists then
                     quest.complete()
                 end
-        )
-    end
+            end,
+            completeQuest
+    )
 end
 
+---@param data FightData
+local function ensureFight(data)
+    if not data or self.snapshotVersion == data.snapshotVersion then
+        return
+    end
 
---function addPromise()
---    promises:add(world.sendEntityMessage("server", "irden:fight:get", self.fightName), updateFightSituation, addPromise)
---end
---
---function startUpdatingFights()
---    function updateFightSituation(currentFight)
---        local currentPlayerName = "Неизвестно"
---        if currentFight.currentPlayer and currentFight.players[currentFight.currentPlayer] then
---            currentPlayerName = currentFight.players[currentFight.currentPlayer].name
---        end
---
---        local objectiveList = not next(currentFight.players) and { { "Перезайдите в бой!", false } } or {
---            { currentFight.name .. "(^yellow;" .. currentFight.round .. "^reset;): Ход ^orange;" .. currentPlayerName .. "^reset;", false }
---        }
---
---        for _, fighter in ipairs(sortedKeys(currentFight.players)) do
---            quest.setParameter(fighter.uniqueId, fighter)
---            table.insert(objectiveList, { string.format("%2s: %s%s^reset;", fighter.initiative, fighter.name == world.entityName(player.id()) and "^yellow;" or (fighter.asEnemy and "^red;" or ""), fighter.name), fighter.done })
---        end
---        quest.setObjectiveList(objectiveList)
---
---        if currentFight.currentPlayer and currentFight.players[currentFight.currentPlayer] and player.getProperty("toShowCurrentPlayerIndicator", true) then
---            quest.setIndicators({ currentFight.currentPlayer })
---        else
---            quest.setIndicators({})
---        end
---        promises:add(world.sendEntityMessage("irdenfighthandler_" .. self.fightName, "getFight"), updateFightSituation, addPromise)
---    end
---
---    promises:add(world.sendEntityMessage("irdenfighthandler_" .. self.fightName, "getFight"), updateFightSituation, addPromise)
---end
---
---function sortedKeys(query)
---    local keys = {}
---    for k, v in pairs(query) do
---        table.insert(keys, v)
---    end
---
---    table.sort(keys, function(a, b)
---        if a.initiative ~= b.initiative then
---            return a.initiative > b.initiative
---        else
---            return a.uniqueId > b.uniqueId
---        end
---    end)
---    return keys
---end
+    local queue = data.queue or {}
+    local playersInFight = data.playersInFight or {}
+    local currentPlayerUuid = data.currentPlayerUuidTurn
+    local currentPlayer = currentPlayerUuid and playersInFight[currentPlayerUuid] or nil
+    local currentPlayerIndex = findCurrentPlayerIndex(queue, currentPlayerUuid)
+
+    self.snapshotVersion = data.snapshotVersion
+
+    if currentPlayer then
+        quest.setParameter(CURRENT_TURN_PARAMETER, {
+            type = "entity",
+            uniqueId = currentPlayerUuid
+        })
+        quest.setIndicators({ CURRENT_TURN_PARAMETER })
+    else
+        quest.setIndicators({})
+    end
+
+    quest.setObjectiveList(
+            createObjectiveList(data, queue, playersInFight, currentPlayerIndex)
+    )
+    updateProgress(#queue, currentPlayerIndex)
+end
+
+local function handleNextTurn()
+    sendFightMessage(
+            MESSAGE.NEXT_TURN,
+            queueMessage,
+            completeQuest
+    )
+end
+
+local function handleLeaveFight(_, isLocal, message)
+    if not isLocal then
+        completeQuest(message)
+        return
+    end
+
+    sendFightMessage(
+            MESSAGE.LEAVE,
+            completeQuest,
+            completeQuest
+    )
+end
+
+function init()
+    local fightParameter = quest.questDescriptor().parameters.fight
+
+    self.fightName = fightParameter.data.fightName
+    self.snapshotVersion = nil
+
+    message.setHandler(MESSAGE.LEAVE, handleLeaveFight)
+    message.setHandler(MESSAGE.NEXT_TURN, simpleHandler(handleNextTurn))
+    message.setHandler(MESSAGE.UPDATE, simpleHandler(ensureFight))
+
+    showWaitingState()
+    checkFightExists()
+end
+
+function update()
+    promises:update()
+end
