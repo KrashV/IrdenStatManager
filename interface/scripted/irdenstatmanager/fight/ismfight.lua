@@ -4,14 +4,12 @@ end
 
 function enterFight()
   local function rollInitiative()
-    local initiative = math.random(20)
     local bonuses = getBonuses({"INITIATIVE"})
 
     sendMessageToServer("statmanager", {
       type = "initiative", 
       dice = 20,
       rgseed = util.seedTime(),
-      initiative = initiative,
       source = world.entityName(player.id()),
       fightName = self.irden.fightName,
       bonuses = bonuses
@@ -54,7 +52,6 @@ function enterFight()
               type = "json",
               data = {
                 fightName = self.irden.fightName,
-                initiative = init,
                 asEnemy = widget.getChecked("lytCharacter.btnEnterFightAsEnemy")
               }
             }

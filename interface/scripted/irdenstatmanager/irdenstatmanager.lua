@@ -1486,12 +1486,12 @@ function sendMessageToServer(message, data)
           table.insert(uniqueIds, fighter.uniqueId)
         end
         data.uniqueIds = uniqueIds
-        world.sendEntityMessage(0, message, data)
+        world.sendEntityMessage("server", message, data)
       end)
       return
     end
   end
-  world.sendEntityMessage(0, message, data)
+  world.sendEntityMessage("server", message, data)
 end
 
 
