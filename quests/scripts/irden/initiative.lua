@@ -104,7 +104,7 @@ local function createObjectiveList(data, queue, playersInFight, currentPlayerInd
             table.insert(objectiveList, {
                 ("%s  %s (%s)"):format(
                         marker,
-                        fighter.name or "Неизвестно",
+                        colorPlayerName(fighter),
                         fighter.initiative or 0
                 ),
                 completed

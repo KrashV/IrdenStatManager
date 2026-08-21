@@ -20,15 +20,6 @@ function enterFight()
 
 
   if self.irden.fightName and self.irden.fightName ~= "" then
-    -- We entered a fight: if we were in the fight already, send the message that we leave
-    local previousFight = player.getProperty("irdenfightName")
-    if previousFight then
-      world.sendEntityMessage("irdenfighthandler_" .. previousFight, "nextTurn", player.id(), true, player.isAdmin())
-    end
-
-
-    player.setProperty("irdenfightName", self.irden.fightName)
-
     rollInitiative()
   else
     irdenUtils.alert("^red;Введите имя боя!^reset;")
