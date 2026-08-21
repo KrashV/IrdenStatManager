@@ -4,16 +4,14 @@ end
 
 function enterFight()
   local function rollInitiative()
-    local initiative = math.random(20)
     local bonuses = getBonuses({"INITIATIVE"})
 
     sendMessageToServer("statmanager", {
       type = "initiative", 
       dice = 20,
-      rgseed = util.seedTime(),
-      initiative = initiative,
       source = world.entityName(player.id()),
       fightName = self.irden.fightName,
+      fightEntityType = widget.getChecked("lytCharacter.btnEnterFightAsEnemy") and "MONSTER" or "PLAYER",
       bonuses = bonuses
     })
 
@@ -22,61 +20,7 @@ function enterFight()
 
 
   if self.irden.fightName and self.irden.fightName ~= "" then
-    -- We entered a fight: if we were in the fight already, send the message that we leave
-    local previousFight = player.getProperty("irdenfightName")
-    if previousFight then
-      world.sendEntityMessage("irdenfighthandler_" .. previousFight, "nextTurn", player.id(), true, player.isAdmin())
-    end
-
-
-    player.setProperty("irdenfightName", self.irden.fightName)
-
-    promises:add(world.findUniqueEntity("irdenfighthandler_" .. self.irden.fightName), function(pos)
-      -- we are already in a fight
-      promises:add(world.sendEntityMessage("irdenfighthandler_" .. self.irden.fightName, "getFight"), function(currentFight)
-        local init = 20
-        if not currentFight.players[player.uniqueId()] then
-          init = rollInitiative()
-        else
-          init = currentFight.players[player.uniqueId()].initiative
-          sendMessageToServer("statmanager", {
-            type = "return_to_fight",
-            fightName = self.irden.fightName,
-            initiative = init
-          })
-        end
-        
-        player.startQuest({
-          templateId = "irdeninitiative",
-          questId = "irdeninitiative",
-          parameters = {
-            fight = {
-              type = "json",
-              data = {
-                fightName = self.irden.fightName,
-                initiative = init,
-                asEnemy = widget.getChecked("lytCharacter.btnEnterFightAsEnemy")
-              }
-            }
-          }
-        })
-      end)
-    end, function(error)
-      player.startQuest({
-        templateId = "irdeninitiative",
-        questId = "irdeninitiative",
-        parameters = {
-          fight = {
-            type = "json",
-            data = {
-              fightName = self.irden.fightName,
-              initiative = rollInitiative(),
-              asEnemy = widget.getChecked("lytCharacter.btnEnterFightAsEnemy")
-            }
-          }
-        }
-      })
-    end)
+    rollInitiative()
   else
     irdenUtils.alert("^red;Введите имя боя!^reset;")
   end
@@ -85,7 +29,7 @@ end
 function leaveFight()
   widget.setText("lytCharacter.tbxFightName", "")
   self.irden.fightName = nil
-  world.sendEntityMessage(player.id(), "leaveFight")
+  world.sendEntityMessage(player.id(), "irden:fight:leave")
 
   -- Drop the roll mode to default
 
@@ -100,5 +44,5 @@ function clearFight()
 end
 
 function nextTurn()
-  world.sendEntityMessage(player.id(), "nextTurn", player.uniqueId())
+  world.sendEntityMessage(player.id(), "irden:fight:turn:next")
 end

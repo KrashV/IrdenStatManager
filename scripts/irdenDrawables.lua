@@ -20,7 +20,7 @@ function init()
     self.irden = irdenUtils.loadIrden()
 
     local movementBonus = root.assetJson("/interface/scripted/collections/collectionsgui.config").gui.lytArmory.children.rgArmour.buttons[self.irden.gear.armour.armour + 2].data.movementBonus
-    
+
     self.movement = irdenUtils.getBonusByTag(movementBonus).value + irdenUtils.addBonusToStat(0, "MOVEMENT")
 
     getPlayers()
@@ -64,34 +64,52 @@ function init()
         self.showPointer = false
     end))
 
-
-    message.setHandler("ism_your_turn", simpleHandler(function(fightName)
+    message.setHandler("irden:fight:turn:your", simpleHandler(function(fightName)
         local conf = root.assetJson("/interface/scripted/irdenstatmanager/ismnotify/ismnotify.config")
         conf.text = string.format("^gray;[^red;%s^gray;]^reset;: Твой ход!", fightName)
         conf.sound = "/sfx/tech/mech_horn_charge.ogg"
         player.interact("ScriptPane", conf)
+        interface.queueMessage("!!Твой ход!!")
+    end))
+
+    message.setHandler("irden:fight:join", simpleHandler(function(data)
+        local fightName = data.fightName
+        if fightName == nil then return false end
+        interface.queueMessage("Вступаю в бой: " .. fightName)
+        player.startQuest({
+            templateId = "irdeninitiative",
+            questId = "irdeninitiative",
+            parameters = {
+                fight = {
+                    type = "json",
+                    data = {
+                        fightName = fightName,
+                    }
+                }
+            }
+        })
     end))
 
 end
 
 function getPlayers()
-    self.pIds = world.playerQuery(player.aimPosition(), 50, {withoutEntityId = player.id()})
-    timers:add(0.5, function() getPlayers() end)
+    self.pIds = world.playerQuery(player.aimPosition(), 50, { withoutEntityId = player.id() })
+    timers:add(0.5, function()
+        getPlayers()
+    end)
 end
-
 
 function drawDrawable(drawable)
     if self.isOpenSB then
         if drawable.image then
             self.drawCanvas:drawImage(drawable.image, vec2.div(drawable.position, interface.scale()), drawable.scale / interface.scale(), drawable.color)
-        elseif drawable.line then 
+        elseif drawable.line then
             self.drawCanvas:drawLine(vec2.div(drawable.line[1], interface.scale()), vec2.div(drawable.line[2], interface.scale()), drawable.color, drawable.width)
         end
     else
-        interface.drawDrawable(drawable, {0, 0}, 1)
+        interface.drawDrawable(drawable, { 0, 0 }, 1)
     end
 end
-
 
 function update(...)
     if self.drawCanvas then
@@ -117,7 +135,9 @@ function update(...)
 
         for _, p in ipairs(self.pIds) do
             local entityPos = world.entityPosition(p)
-            if entityPos == nil then return end
+            if entityPos == nil then
+                return
+            end
             local distance = vec2.sub(entityPos, mPosition)
             local blockDistance = vec2.mag(vec2.sub(distance, mouthOffset)) / distanceInBlocks
             local standartBlockDistance = vec2.mag(vec2.sub(distance, mouthOffset)) / stanartDistanceInBlocks
@@ -183,7 +203,6 @@ function update(...)
                 aimPosition = camera.worldToScreen(player.aimPosition())
             end
 
-
             drawDrawable({
                 line = { camera.worldToScreen(mouthPosition), { aimPosition[1], camera.worldToScreen(mouthPosition)[2] } },
                 position = { 0, 0 },
@@ -199,7 +218,6 @@ function update(...)
                 fullbright = true,
                 width = 2
             })
-
 
             local blockDistance = vec2.mag(vec2.sub(difference, mouthOffset)) / distanceInBlocks
             local n = blockDistance < 0.3 and "X" or math.min(math.floor(blockDistance + 1), 9)

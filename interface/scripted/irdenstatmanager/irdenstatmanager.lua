@@ -1478,20 +1478,20 @@ function sendMessageToServer(message, data)
       end
       data.clientIds = clientIds
     end
-  elseif data.rollMode == "Fight" then
-    if player.hasActiveQuest("irdeninitiative") and self.irden.fightName then
-      promises:add(world.sendEntityMessage("irdenfighthandler_" .. self.irden.fightName, "getFight"), function(fight) 
-        local uniqueIds = {}
-        for _, fighter in pairs(fight.players) do 
-          table.insert(uniqueIds, fighter.uniqueId)
-        end
-        data.uniqueIds = uniqueIds
-        world.sendEntityMessage(0, message, data)
-      end)
-      return
-    end
+  --elseif data.rollMode == "Fight" then
+  --  if player.hasActiveQuest("irdeninitiative") and self.irden.fightName then
+  --    promises:add(world.sendEntityMessage("irdenfighthandler_" .. self.irden.fightName, "getFight"), function(fight)
+  --      local uniqueIds = {}
+  --      for _, fighter in pairs(fight.players) do
+  --        table.insert(uniqueIds, fighter.uniqueId)
+  --      end
+  --      data.uniqueIds = uniqueIds
+  --      world.sendEntityMessage("server", message, data)
+  --    end)
+  --    return
+  --  end
   end
-  world.sendEntityMessage(0, message, data)
+  world.sendEntityMessage("server", message, data)
 end
 
 
