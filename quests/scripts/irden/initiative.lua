@@ -201,6 +201,7 @@ function init()
     local fightParameter = quest.questDescriptor().parameters.fight
 
     self.fightName = fightParameter.data.fightName
+    player.setProperty("irdenfightName", self.fightName)
     self.snapshotVersion = nil
 
     message.setHandler(MESSAGE.LEAVE, handleLeaveFight)
