@@ -72,6 +72,7 @@ local function findCurrentPlayerIndex(queue, currentPlayerUuid)
     return nil
 end
 
+---@param playersInFight table<number, PlayerInFight>
 local function createObjectiveList(data, queue, playersInFight, currentPlayerIndex)
     local currentPlayer = playersInFight[data.currentPlayerUuidTurn]
 
@@ -94,6 +95,7 @@ local function createObjectiveList(data, queue, playersInFight, currentPlayerInd
         }
     }
 
+
     for index, uuid in ipairs(queue) do
         local fighter = playersInFight[uuid]
 
@@ -102,15 +104,33 @@ local function createObjectiveList(data, queue, playersInFight, currentPlayerInd
             local completed = currentPlayerIndex ~= nil and index < currentPlayerIndex
 
             table.insert(objectiveList, {
-                ("%s  %s (%s)"):format(
-                        marker,
-                        colorPlayerName(fighter),
-                        fighter.initiative or 0
-                ),
-                completed
+            ("%s  %s (%s)"):format(
+            marker,
+            colorPlayerName(fighter),
+            fighter.initiative or 0
+            ),
+            completed
             })
         end
     end
+    ---@type table<number, PlayerInFight>
+    local spectators = jarray()
+
+    for _, fighter in pairs(playersInFight) do
+        if fighter.entityType == "SPECTATOR" then
+            table.insert(spectators, fighter)
+        end
+    end
+
+    if #spectators > 0 then
+        local object = "^Cyan;Наблюдатели:^reset;"
+        for _, fighter in ipairs(spectators) do
+            object = object .. "\n- " ..fighter.name
+        end
+        table.insert(objectiveList, {object, true})
+    end
+
+    sb.logInfo(sb.printJson(objectiveList, 1))
 
     return objectiveList
 end
