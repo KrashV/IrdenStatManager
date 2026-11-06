@@ -293,7 +293,7 @@ end
 
 function loadAttacks()
   for _, layout in ipairs(self.attackTypes) do
-    widget.removeAllChildren("lytAttacks.lyt" .. layout .. "Attack.lytCustomAttack")
+    widget.removeAllChildren("lytAttacks.lyt" .. layout .. "Attack.saCustomAttack")
   end
 
   if self.irden.attacks then
@@ -329,7 +329,7 @@ function loadAttacks()
 
       local childName = attack.desc .. math.random(1031)
 
-      widget.addChild("lytAttacks.lyt" .. attackTypeMap[attack.type].layout .. "Attack.lytCustomAttack", {
+      widget.addChild("lytAttacks.lyt" .. attackTypeMap[attack.type].layout .. "Attack.saCustomAttack", {
         type = "button",
         position = attackTypeMap[attack.type].position,
         caption = attack.desc,
@@ -340,7 +340,7 @@ function loadAttacks()
       }, childName)
 
       attack.buttonName = childName
-      widget.addChild("lytAttacks.lyt" .. attackTypeMap[attack.type].layout .. "Attack.lytCustomAttack", {
+      widget.addChild("lytAttacks.lyt" .. attackTypeMap[attack.type].layout .. "Attack.saCustomAttack", {
         type = "button",
         position = vec2.add(attackTypeMap[attack.type].position, {-15, 0}),
         caption = "-",
@@ -349,10 +349,6 @@ function loadAttacks()
         callback = "deleteAttack",
         data = attack
       }, childName .. "btn")
-      
-      if attackTypeMap[attack.type].position[2] <= 60 then
-        attackTypeMap[attack.type].position = {attackTypeMap[attack.type].position[1] + 80, 180}
-      end
     end
   end
 end
@@ -395,8 +391,8 @@ function deleteAttack(_, data)
 
   loadBonuses()
 
-  widget.removeChild("lytAttacks.lyt" .. attackTypeMap[data.type].layout .. "Attack.lytCustomAttack", data.buttonName)
-  widget.removeChild("lytAttacks.lyt" .. attackTypeMap[data.type].layout .. "Attack.lytCustomAttack", data.buttonName .. "btn")
+  widget.removeChild("lytAttacks.lyt" .. attackTypeMap[data.type].layout .. "Attack.saCustomAttack", data.buttonName)
+  widget.removeChild("lytAttacks.lyt" .. attackTypeMap[data.type].layout .. "Attack.saCustomAttack", data.buttonName .. "btn")
 end
 
 
@@ -747,12 +743,13 @@ function restoreHp()
 end
 
 function roll20(_, dice)
-  sendMessageToServer("statmanager", {
-    type = "diceroll", 
-    dice = tonumber(widget.getText("lytCharacter.tbxStatRollany")) or 0,
-    action = description ~= "" and description,
-    source = world.entityName(player.id())
-  })
+    local description = widget.getText("lytCharacter.tbxSkillName")
+    sendMessageToServer("statmanager", {
+        type = "diceroll",
+        dice = tonumber(widget.getText("lytCharacter.tbxStatRollany")) or 0,
+        action = description ~= "" and description,
+        source = world.entityName(player.id())
+    })
 end
 
 function rollStat(_, data)
